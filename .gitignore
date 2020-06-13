@@ -1,0 +1,12 @@
+# Dependency directories
+**/node_modules/
+
+# Config files
+**/.eslintrc.json
+
+# Environment variables
+**/*.env
+
+# Temporary files
+server/auth_server_passport.js
+client/README.md
