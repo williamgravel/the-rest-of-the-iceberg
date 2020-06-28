@@ -1,20 +1,14 @@
-// SERVER PACKAGE IMPORTS
+// SERVER PACKAGES IMPORTS
 const express = require('express')
 const router = express.Router()
 const queryString = require('query-string')
 const axios = require('axios')
-const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
+
+// CONFIG & ENVIRONMENT VARIABLES
 const config = require('../config')
 
-// DATABASE CONFIGURATION
-mongoose.connect('mongodb://localhost:27017/theRestOfTheIceberg', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-})
-
+// DATABASE MODELS IMPORTS
 const User = require('../models/user')
 User.init().then(() => {
   console.log('[MONGODB] User model initialized.')

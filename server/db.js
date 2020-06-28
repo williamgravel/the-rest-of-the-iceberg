@@ -1,9 +1,11 @@
-// PACKAGE IMPORTS
+// DATABASE PACKAGE IMPORTS
 const mongoose = require('mongoose')
-const chalk = require('chalk')
+
+// CONFIG & ENVIRONMENT VARIABLES
 const config = require('./config')
 
 // CONSOLE COLORS
+const chalk = require('chalk')
 const connected = chalk.bold.cyan
 const error = chalk.bold.yellow
 const disconnected = chalk.bold.red

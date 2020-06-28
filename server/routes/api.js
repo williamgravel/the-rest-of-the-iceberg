@@ -1,9 +1,14 @@
+// SERVER PACKAGES IMPORTS
 const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
+
+// CONFIG & ENVIRONMENT VARIABLES
+const config = require('../config')
+
+// FUNCTIONS IMPORTS
 const getTop = require('../scripts/getTop')
 const checkAccess = require('../scripts/checkAccess')
-const config = require('../config')
 
 const userVerify = function (req, res, next) {
   if (req.cookies.token) {

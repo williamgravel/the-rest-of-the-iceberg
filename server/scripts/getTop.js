@@ -30,32 +30,28 @@ module.exports = async function (accessToken, username, queryType, timeRange) {
 
     if (queryType === 'artists') {
       modelType = 'TopArtist'
-      await Promise.all(
-        items.map(async (item) => {
-          const doc = await TopArtist.findOneAndUpdate(
-            { spotifyID: item.id },
-            { name: item.name, genres: item.genres, profilePic: item.images[0].url },
-            { upsert: true, new: true }
-          )
-            .select('_id')
-            .exec()
-          list.push(doc._id)
-        })
-      )
+      for (const item of items) {
+        const doc = await TopArtist.findOneAndUpdate(
+          { spotifyID: item.id },
+          { name: item.name, genres: item.genres, profilePic: item.images[0].url },
+          { upsert: true, new: true }
+        )
+          .select('_id')
+          .exec()
+        list.push(doc._id)
+      }
     } else if (queryType === 'tracks') {
       modelType = 'TopTrack'
-      await Promise.all(
-        items.map(async (item) => {
-          const doc = await TopTrack.findOneAndUpdate(
-            { spotifyID: item.id },
-            { name: item.name, albumArt: item.album.images[0].url },
-            { upsert: true, new: true }
-          )
-            .select('_id')
-            .exec()
-          list.push(doc._id)
-        })
-      )
+      for (const item of items) {
+        const doc = await TopTrack.findOneAndUpdate(
+          { spotifyID: item.id },
+          { name: item.name, albumArt: item.album.images[0].url },
+          { upsert: true, new: true }
+        )
+          .select('_id')
+          .exec()
+        list.push(doc._id)
+      }
     }
 
     await TopList.findOneAndUpdate(

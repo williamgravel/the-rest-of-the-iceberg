@@ -1,10 +1,9 @@
-// SERVER PACKAGE IMPORTS
+// SERVER PACKAGES IMPORTS
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 
 // CONFIG & ENVIRONMENT VARIABLES
-// require('dotenv').config()
 const config = require('./config')
 
 // DATABASE IMPORT
