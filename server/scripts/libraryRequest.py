@@ -6,11 +6,11 @@ from datetime import datetime
 
 # SYSTEM ARGUMENTS
 accessToken = sys.argv[1]
-userSpotifyID = 'williamgravel2000'
+userSpotifyID = sys.argv[2]
 userName = 'William Gravel'
 
 # DATABASE CONNECTION & INITIALIZATION
-conn = sqlite3.connect('../databases/UserLibraryDB.sqlite')
+conn = sqlite3.connect('../database/UserLibraryDB.sqlite')
 cur = conn.cursor()
 
 cur.executescript('''
@@ -129,17 +129,20 @@ while True:
         # DATABASE INSERTION
         cur.execute('''INSERT OR IGNORE INTO Artists (spotify_id, name)
             VALUES (?, ?)''', (artistSpotifyID, artistName))
-        cur.execute('SELECT id FROM Artists WHERE spotify_id = ?', (artistSpotifyID,))
+        cur.execute('SELECT id FROM Artists WHERE spotify_id = ?',
+                    (artistSpotifyID,))
         artistDatabaseID = cur.fetchone()[0]
 
         cur.execute('''INSERT OR IGNORE INTO Albums (spotify_id, name, type, released_on, date_precision, album_art, artist_id)
             VALUES (?, ?, ?, ?, ?, ?, ?)''', (albumSpotifyID, albumName, albumType, albumReleaseDate, albumReleaseDatePrecision, albumArt, artistDatabaseID))
-        cur.execute('SELECT id FROM Albums WHERE spotify_id = ?', (albumSpotifyID,))
+        cur.execute('SELECT id FROM Albums WHERE spotify_id = ?',
+                    (albumSpotifyID,))
         albumDatabaseID = cur.fetchone()[0]
 
         cur.execute('''INSERT OR IGNORE INTO Tracks (spotify_id, name, duration, album_id)
             VALUES (?, ?, ?, ?)''', (trackSpotifyID, trackName, trackDuration, albumDatabaseID))
-        cur.execute('SELECT id FROM Tracks WHERE spotify_id = ?', (trackSpotifyID,))
+        cur.execute('SELECT id FROM Tracks WHERE spotify_id = ?',
+                    (trackSpotifyID,))
         trackDatabaseID = cur.fetchone()[0]
 
         cur.execute('''INSERT OR IGNORE INTO UserTrackList (user_id, track_id, added_at)
@@ -152,7 +155,8 @@ while True:
         total = jsonData['total']
         totalRequestsCount = math.ceil(total/50)
     requestsCount = requestsCount + 1
-    print('Retrieving songs... [', requestsCount, '/', totalRequestsCount, ']', sep='')
+    print('Retrieving songs... [', requestsCount,
+          '/', totalRequestsCount, ']', sep='')
     apiURL = jsonData['next']
     if apiURL is None:
         break

@@ -10,7 +10,7 @@ import sys
 userSpotifyID = 'williamgravel2000'
 
 # DATABASE CONNECTION
-conn = sqlite3.connect('./databases/UserLibraryDB.sqlite')
+conn = sqlite3.connect('./database/UserLibraryDB.sqlite')
 cur = conn.cursor()
 
 cur.execute('''SELECT COUNT(*) FROM Albums JOIN Tracks JOIN Users JOIN UserTrackList WHERE
@@ -34,13 +34,17 @@ albumArtHandles = [requests.get(j, stream=True).raw for j in albumArtList]
 
 for i in range(3):
     rowImagesList = albumArtHandles[i*rowCount:(i+1)*rowCount]
-    rowImages = [ImageOps.expand(Image.open(k), border=10, fill='#111') for k in rowImagesList]
+    rowImages = [ImageOps.expand(Image.open(
+        k), border=10, fill='#111') for k in rowImagesList]
     rowImagesMin = sorted([(np.sum(p.size), p.size) for p in rowImages])[0][1]
-    rowImagesConcat = np.hstack((np.asarray(l.resize(rowImagesMin)) for l in rowImages))
+    rowImagesConcat = np.hstack(
+        (np.asarray(l.resize(rowImagesMin)) for l in rowImages))
     rowImagesConcat = Image.fromarray(rowImagesConcat)
-    rowImagesConcat.save('./images/row' + str(i+1) + '_' + userSpotifyID + '.jpg')
+    rowImagesConcat.save('./images/row' + str(i+1) +
+                         '_' + userSpotifyID + '.jpg')
 
-gridImagesList = ['./images/row' + str(m+1) + '_' + userSpotifyID + '.jpg' for m in range(3)]
+gridImagesList = ['./images/row' +
+                  str(m+1) + '_' + userSpotifyID + '.jpg' for m in range(3)]
 gridImages = [Image.open(n) for n in gridImagesList]
 gridImagesMin = sorted([(np.sum(q.size), q.size) for q in gridImages])[0][1]
 gridImagesConcat = np.vstack((np.asarray(o) for o in gridImages))

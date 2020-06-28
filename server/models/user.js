@@ -1,6 +1,5 @@
-const mongoose = require('mongoose')
-const findOrCreate = require('mongoose-findorcreate')
-const Schema = mongoose.Schema
+const db = require('../db')
+const Schema = db.Schema
 
 const userSchema = Schema(
   {
@@ -10,8 +9,6 @@ const userSchema = Schema(
       unique: true,
     },
     displayName: String,
-    createdAt: Date,
-    updatedAt: Date,
     accessToken: String,
     refreshToken: String,
   },
@@ -20,17 +17,4 @@ const userSchema = Schema(
   }
 )
 
-userSchema.pre('save', function (next) {
-  let now = Date.now()
-
-  this.updatedAt = now
-  if (!this.createdAt) {
-    this.createdAt = now
-  }
-
-  next()
-})
-
-userSchema.plugin(findOrCreate)
-
-module.exports = mongoose.model('User', userSchema)
+module.exports = db.model('User', userSchema)
