@@ -8,10 +8,18 @@ const jwt = require('jsonwebtoken')
 // CONFIG & ENVIRONMENT VARIABLES
 const config = require('../config')
 
+// CONSOLE COLORS
+const chalk = require('chalk')
+const initalized = chalk.bold.green
+
 // DATABASE MODELS IMPORTS
 const User = require('../models/user')
-User.init().then(() => {
-  console.log('[MONGODB] User model initialized.')
+User.on('index', (err) => {
+  if (!err) {
+    console.log(initalized('[MONGODB] USER MODEL INDEXED'))
+  } else {
+    console.log(err)
+  }
 })
 
 // RANDOM STRING GENERATOR

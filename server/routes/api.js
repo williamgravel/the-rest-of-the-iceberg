@@ -9,6 +9,7 @@ const config = require('../config')
 // FUNCTIONS IMPORTS
 const getTop = require('../scripts/getTop')
 const checkAccess = require('../scripts/checkAccess')
+const analyzeLibrary = require('../scripts/analyzeLibrary')
 
 const userVerify = function (req, res, next) {
   if (req.cookies.token) {
@@ -36,6 +37,11 @@ router.get('/top', async (req, res) => {
   } else {
     res.sendStatus(400)
   }
+})
+
+router.get('/library', async (req, res) => {
+  let libraryResults = await analyzeLibrary(req.access_token, req.username)
+  res.json(libraryResults)
 })
 
 module.exports = router
