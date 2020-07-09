@@ -8,8 +8,7 @@ const snapshotSchema = Schema(
       required: true,
     },
     totalTracks: Number,
-    uniqueArtists: Number,
-    uniqueAlbums: Number,
+    totalArtists: Number,
     tracksPerArtist: {
       mean: Number,
       median: Number,
@@ -22,16 +21,21 @@ const snapshotSchema = Schema(
     percentExplicit: Number,
     commonArtists: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'TopArtist',
+        artistID: { type: Schema.Types.ObjectId, ref: 'Artist' },
+        trackCount: Number,
       },
     ],
     classicArtists: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'TopArtist',
+        artistID: { type: Schema.Types.ObjectId, ref: 'Artist' },
+        oldestYear: Number,
+        newestYear: Number,
       },
     ],
+    savedArtists: {
+      single: [String],
+      multi: [String],
+    },
   },
   {
     timestamps: true,

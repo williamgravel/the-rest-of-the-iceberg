@@ -3,6 +3,9 @@ const express = require('express')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 
+const chalk = require('chalk')
+const listening = chalk.bold.white
+
 // CONFIG & ENVIRONMENT VARIABLES
 const config = require('./config')
 
@@ -22,5 +25,5 @@ app.use(routes)
 
 // APP LISTEN
 app.listen(config.app.port, () => {
-  console.log(`Server listening on port ${config.app.port}`)
+  console.log(listening(`[EXPRESS] SERVER LISTENING ON PORT ${config.app.port}`))
 })

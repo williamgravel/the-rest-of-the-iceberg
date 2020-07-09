@@ -5,7 +5,6 @@ const artistSchema = Schema({
   spotifyID: {
     type: String,
     required: true,
-    unique: true,
   },
   name: {
     type: String,
@@ -22,4 +21,4 @@ const artistSchema = Schema({
   },
 })
 
-module.exports = db.model('TopArtist', artistSchema)
+module.exports = db.model('Artist', artistSchema)

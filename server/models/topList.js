@@ -25,7 +25,15 @@ const listSchema = Schema(
     onModel: {
       type: String,
       required: true,
-      enum: ['TopArtist', 'TopTrack'],
+      enum: ['Artist', 'Track'],
+    },
+    audioFeatures: {
+      danceability: Number,
+      energy: Number,
+      valence: Number,
+      percentAcoustic: Number,
+      percentInstrumental: Number,
+      percentLive: Number,
     },
   },
   {

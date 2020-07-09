@@ -5,7 +5,6 @@ const trackSchema = Schema({
   spotifyID: {
     type: String,
     required: true,
-    unique: true,
   },
   name: {
     type: String,
@@ -17,4 +16,4 @@ const trackSchema = Schema({
   },
 })
 
-module.exports = db.model('TopTrack', trackSchema)
+module.exports = db.model('Track', trackSchema)

@@ -10,9 +10,10 @@ const config = require('../config')
 
 // CONSOLE COLORS
 const chalk = require('chalk')
-const initalized = chalk.bold.green
+const initalized = chalk.bold.magenta
+const authorized = chalk.bold.green
 
-// DATABASE MODELS IMPORTS
+// DATABASE MODELS
 const User = require('../models/user')
 User.on('index', (err) => {
   if (!err) {
@@ -84,7 +85,6 @@ router.get('/spotify/callback', (req, res) => {
         }
       )
       .then((response) => {
-        console.log('[AXIOS] POST REQUEST SUCCESSFUL')
         const access_token = response.data.access_token
         const refresh_token = response.data.refresh_token
 
@@ -95,7 +95,6 @@ router.get('/spotify/callback', (req, res) => {
             },
           })
           .then((response) => {
-            console.log('[AXIOS] GET REQUEST SUCCESSFUL')
             User.findOneAndUpdate(
               { username: response.data.id },
               { displayName: response.data.display_name || response.data.id, accessToken: access_token, refreshToken: refresh_token },
@@ -104,7 +103,6 @@ router.get('/spotify/callback', (req, res) => {
                 if (err) {
                   console.log(err)
                 } else {
-                  console.log('[MONGODB] USER QUERY SUCCESSFUL')
                   const token = jwt.sign(
                     {
                       username: doc.username,
@@ -113,6 +111,7 @@ router.get('/spotify/callback', (req, res) => {
                     config.app.secret_key
                   )
 
+                  console.log(authorized('[SPOTIFY] USER AUTHENTICATED'))
                   res.cookie('token', token, { httpOnly: true })
                   res.redirect('http://localhost:3000/')
                 }

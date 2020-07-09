@@ -1,37 +1,37 @@
+// PACKAGE IMPORTS
 const queryString = require('query-string')
 const axios = require('axios')
 const moment = require('moment')
 
-const TopTrack = require('../models/topTrack')
-const TopArtist = require('../models/topArtist')
+// SPOTIFY API FUNCTIONS
+const analyzeTracks = require('./analyzeTracks')
+
+// DATABASE MODELS
+const Track = require('../models/track')
+const Artist = require('../models/artist')
 const TopList = require('../models/topList')
 
-module.exports = async function (accessToken, username, queryType, timeRange) {
-  const { updatedAt: last_request } =
-    (await TopList.findOne({ username: username, queryType: queryType, timeRange: timeRange }, '-_id updatedAt').exec()) || {}
-  if (!last_request || !moment(last_request.getTime(), 'x').isBetween(moment().subtract(7, 'd'), moment(), 'd', '[)')) {
+module.exports = async function (username, options) {
+  const doc = await TopList.findOne({ username: username }).select('updatedAt').exec()
+  if (!doc || !moment(doc.updatedAt.getTime(), 'x').isBetween(moment().subtract(7, 'd'), moment(), 'd', '(]')) {
     const response = await axios.get(
       'https://api.spotify.com/v1/me/top/' +
-        queryType +
+        options.queryType +
         '?' +
         queryString.stringify({
-          limit: 10,
-          time_range: timeRange,
+          limit: 50,
+          time_range: options.timeRange,
         }),
-      {
-        headers: {
-          'Authorization': 'Bearer ' + accessToken,
-        },
-      }
+      { headers: { 'User-ID': username } }
     )
-    const items = response.data.items
+    const items = response.data.items.slice(10)
     let list = []
     let modelType = ''
 
-    if (queryType === 'artists') {
-      modelType = 'TopArtist'
+    if (options.queryType === 'artists') {
+      modelType = 'Artist'
       for (const item of items) {
-        const doc = await TopArtist.findOneAndUpdate(
+        const doc = await Artist.findOneAndUpdate(
           { spotifyID: item.id },
           { name: item.name, genres: item.genres, profilePic: item.images[0].url },
           { upsert: true, new: true }
@@ -40,10 +40,10 @@ module.exports = async function (accessToken, username, queryType, timeRange) {
           .exec()
         list.push(doc._id)
       }
-    } else if (queryType === 'tracks') {
-      modelType = 'TopTrack'
+    } else if (options.queryType === 'tracks') {
+      modelType = 'Track'
       for (const item of items) {
-        const doc = await TopTrack.findOneAndUpdate(
+        const doc = await Track.findOneAndUpdate(
           { spotifyID: item.id },
           { name: item.name, albumArt: item.album.images[0].url },
           { upsert: true, new: true }
@@ -54,16 +54,35 @@ module.exports = async function (accessToken, username, queryType, timeRange) {
       }
     }
 
-    await TopList.findOneAndUpdate(
-      { username: username, queryType: queryType, timeRange: timeRange, onModel: modelType },
-      { list: list },
-      { upsert: true, new: true }
-    )
+    if (options.queryType === 'tracks' && options.updateAudioFeatures === true) {
+      const audioFeatures = analyzeTracks(
+        username,
+        response.data.items.map((track) => track.id)
+      )
+
+      await TopList.findOneAndUpdate(
+        { username: username, queryType: options.queryType, timeRange: options.timeRange, onModel: modelType },
+        { list: list, audioFeatures: audioFeatures },
+        { upsert: true, new: true }
+      )
+    } else {
+      await TopList.findOneAndUpdate(
+        { username: username, queryType: options.queryType, timeRange: options.timeRange, onModel: modelType },
+        { list: list },
+        { upsert: true, new: true }
+      )
+    }
   }
 
-  if (queryType === 'artists') {
-    return await TopList.findOne({ username: username, queryType: queryType, timeRange: timeRange }).populate('list').lean().exec()
-  } else if (queryType === 'tracks') {
-    return await TopList.findOne({ username: username, queryType: queryType, timeRange: timeRange }).populate('list').lean().exec()
+  if (options.queryType === 'artists') {
+    return await TopList.findOne({ username: username, queryType: options.queryType, timeRange: options.timeRange })
+      .populate('list')
+      .lean()
+      .exec()
+  } else if (options.queryType === 'tracks') {
+    return await TopList.findOne({ username: username, queryType: options.queryType, timeRange: options.timeRange })
+      .populate('list')
+      .lean()
+      .exec()
   }
 }
