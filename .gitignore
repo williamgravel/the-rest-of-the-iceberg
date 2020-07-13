@@ -3,10 +3,12 @@
 
 # Config files
 **/.eslintrc.json
+.prettierrc.json
+/.vscode
 
 # Environment variables
 **/*.env
 
 # Temporary files
-server/auth_server_passport.js
 client/README.md
+

@@ -14,6 +14,14 @@ const trackSchema = Schema({
     type: String,
     required: true,
   },
+  artistName: {
+    type: String,
+    required: true,
+  },
+  spotifyURL: {
+    type: String,
+    required: true,
+  },
 })
 
 module.exports = db.model('Track', trackSchema)

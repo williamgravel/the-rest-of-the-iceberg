@@ -1,9 +1,9 @@
 // PACKAGE IMPORTS
 const queryString = require('query-string')
-const spotify = require('../routes/spotify')
+const spotify = require('../spotify')
 
 // DATABASE MODELS
-const LibrarySnapshot = require('../models/librarySnapshot')
+const LibrarySnapshot = require('../../models/librarySnapshot')
 
 const tracks = async function (username, trackList, options) {
   try {
@@ -50,7 +50,9 @@ const artists = async function (username, artistList, options) {
       const library = await LibrarySnapshot.findOne({ username: username }).select('savedArtists.multi').exec()
       savedArtists.push(library.savedArtists.multi)
     } else if (options.trackCount === 'all' || !options.trackCount) {
-      const library = await LibrarySnapshot.findOne({ username: username }).select('savedArtists.single savedArtists.multi').exec()
+      const library = await LibrarySnapshot.findOne({ username: username })
+        .select('savedArtists.single savedArtists.multi')
+        .exec()
       savedArtists.push(library.savedArtists.single)
       savedArtists.push(library.savedArtists.multi)
     }
@@ -99,7 +101,9 @@ const both = async function (username, trackList, options) {
       const library = await LibrarySnapshot.findOne({ username: username }).select('savedArtists.multi').exec()
       savedArtists.push(library.savedArtists.multi)
     } else if (options.trackCount === 'all' || !options.trackCount) {
-      const library = await LibrarySnapshot.findOne({ username: username }).select('savedArtists.single savedArtists.multi').exec()
+      const library = await LibrarySnapshot.findOne({ username: username })
+        .select('savedArtists.single savedArtists.multi')
+        .exec()
       savedArtists.push(library.savedArtists.single)
       savedArtists.push(library.savedArtists.multi)
     }

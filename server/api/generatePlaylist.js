@@ -1,7 +1,9 @@
 // PACKAGE IMPORTS
 const queryString = require('query-string')
-const spotify = require('../routes/spotify')
-const checkSaved = require('./checkSaved')
+const spotify = require('./spotify')
+
+// SPOTIFY API FUNCTIONS
+const checkSaved = require('./helper/checkSaved')
 
 // DATABASE MODELS
 const TopList = require('../models/topList')
@@ -30,12 +32,14 @@ function sample(pool, k) {
     }
 
     return Array.from(selected).map((i) => pool[i])
-    // return Array.prototype.map.call(selected, (i) => pool[i])
   }
 }
 
-const exploreSeed = async function (username, timeRange) {
-  const top = await TopList.findOne({ username: username, queryType: 'artists', timeRange: timeRange }).populate('list').lean().exec()
+const exploreSeed = async function (username, options) {
+  const top = await TopList.findOne({ username: username, queryType: 'artists', timeRange: options.timeRange })
+    .populate('list')
+    .lean()
+    .exec()
   let seedArtists = []
   let checkTracks = []
   await Promise.all(
@@ -90,7 +94,9 @@ const exploreTaste = async function (username, options) {
 
     const responsesA = await Promise.all(
       topArtists.map((artist) => {
-        return spotify.get(`https://api.spotify.com/v1/artists/${artist}/related-artists`, { headers: { 'User-ID': username } })
+        return spotify.get(`https://api.spotify.com/v1/artists/${artist}/related-artists`, {
+          headers: { 'User-ID': username },
+        })
       })
     )
 
@@ -104,13 +110,19 @@ const exploreTaste = async function (username, options) {
       }
     }
 
-    const relArtists = await checkSaved.artists(username, Array.from(checkArtists), { outputFormat: 'id', trackCount: 'all' })
+    const relArtists = await checkSaved.artists(username, Array.from(checkArtists), {
+      outputFormat: 'id',
+      trackCount: 'all',
+    })
 
     const responsesB = await Promise.all(
       relArtists.map((artist) => {
-        return spotify.get(`https://api.spotify.com/v1/artists/${artist}/top-tracks?` + queryString.stringify({ country: 'from_token' }), {
-          headers: { 'User-ID': username },
-        })
+        return spotify.get(
+          `https://api.spotify.com/v1/artists/${artist}/top-tracks?` + queryString.stringify({ country: 'from_token' }),
+          {
+            headers: { 'User-ID': username },
+          }
+        )
       })
     )
 
@@ -154,9 +166,12 @@ const secondChance = async function (username, options) {
 
     const responses = await Promise.all(
       randArtists.map((artist) => {
-        return spotify.get(`https://api.spotify.com/v1/artists/${artist}/top-tracks?` + queryString.stringify({ country: 'from_token' }), {
-          headers: { 'User-ID': username },
-        })
+        return spotify.get(
+          `https://api.spotify.com/v1/artists/${artist}/top-tracks?` + queryString.stringify({ country: 'from_token' }),
+          {
+            headers: { 'User-ID': username },
+          }
+        )
       })
     )
 

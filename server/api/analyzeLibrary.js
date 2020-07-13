@@ -1,6 +1,6 @@
 // PACKAGE IMPORTS
 const queryString = require('query-string')
-const spotify = require('../routes/spotify')
+const spotify = require('./spotify')
 const moment = require('moment')
 const stats = require('simple-statistics')
 
@@ -11,7 +11,6 @@ const Artist = require('../models/artist')
 module.exports = async function (username) {
   const doc = await LibrarySnapshot.findOne({ username: username }).select('updatedAt').exec()
   if (!doc || !moment(doc.updatedAt.getTime(), 'x').isBetween(moment().subtract(7, 'd'), moment(), 'd', '(]')) {
-    console.log('Requesting test')
     let apiURL =
       'https://api.spotify.com/v1/me/tracks?' +
       queryString.stringify({
@@ -28,40 +27,38 @@ module.exports = async function (username) {
     let daysUntilSave = []
     let totalPlaytime = 0
     let totalExplicit = 0
-    let queryArtists = new Set()
+    let queryArtists = []
     let commonArtists = []
     let classicArtists = []
 
-    // Track item shortcuts
-    let artistID
-    let releaseYear
-    let isCompilation
-    let isRemastered
-    let found
-
     do {
-      response = await spotify.get(apiURL)
+      response = await spotify.get(apiURL, { headers: { 'User-ID': username } })
 
       for (const item of response.data.items) {
-        artistID = item.track.artists[0].id
-        releaseYear = parseInt(item.track.album.release_date.substring(0, 4))
-        isCompilation = item.track.album.album_type === 'compilation'
-        isRemastered = item.track.album.name.toLowerCase().includes('remastered') || item.track.name.toLowerCase().includes('remastered')
-        found = false
+        // Track item shortcuts
+        const artistID = item.track.artists[0].id
+        const releaseYear = parseInt(item.track.album.release_date.substring(0, 4))
+        const isCompilation = item.track.album.album_type === 'compilation'
+        const isRemastered =
+          item.track.album.name.toLowerCase().includes('remastered') ||
+          item.track.name.toLowerCase().includes('remastered')
+        let found = false
 
+        // Insert or update unique artist entry
         for (let i = 0; i < uniqueArtists.length; i++) {
-          if (uniqueArtists[i]['id'] === artistID) {
-            uniqueArtists[i]['tracks'] += 1
-            if (uniqueArtists[i]['oldest'] > releaseYear && !(isCompilation || isRemastered)) {
-              uniqueArtists[i]['oldest'] = releaseYear
+          if (uniqueArtists[i].id === artistID) {
+            uniqueArtists[i].tracks += 1
+            if (uniqueArtists[i].oldest > releaseYear && !(isCompilation || isRemastered)) {
+              uniqueArtists[i].oldest = releaseYear
             }
-            if (uniqueArtists[i]['newest'] < releaseYear && !(isCompilation || isRemastered)) {
-              uniqueArtists[i]['newest'] = releaseYear
+            if (uniqueArtists[i].newest < releaseYear && !(isCompilation || isRemastered)) {
+              uniqueArtists[i].newest = releaseYear
             }
             found = true
             break
           }
         }
+
         if (!found) {
           uniqueArtists.push({
             id: artistID,
@@ -71,6 +68,7 @@ module.exports = async function (username) {
           })
         }
 
+        // Keep track of days between release and save, total track playtime, and explicit track count
         if (item.track.album.release_date_precision === 'day') {
           daysUntilSave.push(moment(item.added_at).diff(moment(item.track.album.release_date, 'YYYY-MM-DD'), 'd'))
         }
@@ -100,42 +98,46 @@ module.exports = async function (username) {
     })
     uniqueArtistsByTracks.splice(5)
 
+    uniqueArtistsByTracks.forEach((artist) => {
+      queryArtists.push(artist.id)
+    })
+
     let uniqueArtistsByGap = uniqueArtists.slice(0)
     uniqueArtistsByGap.sort((a, b) => {
       return b.newest - b.oldest - (a.newest - a.oldest)
     })
     uniqueArtistsByGap.splice(5)
 
-    for (let j = 0; j < 5; j++) {
-      queryArtists.add(uniqueArtistsByTracks[j]['id'])
-      queryArtists.add(uniqueArtistsByGap[j]['id'])
-    }
+    uniqueArtistsByGap.forEach((artist) => {
+      queryArtists.push(artist.id)
+    })
 
     response = await spotify.get(
-      'https://api.spotify.com/v1/artists?' + queryString.stringify({ ids: Array.from(queryArtists) }, { arrayFormat: 'comma' }),
+      'https://api.spotify.com/v1/artists?' + queryString.stringify({ ids: queryArtists }, { arrayFormat: 'comma' }),
       { headers: { 'User-ID': username } }
     )
 
-    for (const artist of response.data.artists) {
+    for (const [index, artist] of response.data.artists.entries()) {
       const doc = await Artist.findOneAndUpdate(
         { spotifyID: artist.id },
-        { name: artist.name, genres: artist.genres, profilePic: artist.images[0].url },
+        { name: artist.name, profilePic: artist.images[0].url, spotifyURL: artist.external_urls.spotify },
         { upsert: true, new: true }
       )
         .select('_id')
         .exec()
 
-      uniqueArtistsByTracks.forEach((uniqueArtist) => {
-        if (uniqueArtist.id === artist.id) {
-          commonArtists.push({ artistID: doc._id, trackCount: uniqueArtist.tracks })
-        }
-      })
-
-      uniqueArtistsByGap.forEach((uniqueArtist) => {
-        if (uniqueArtist.id === artist.id) {
-          classicArtists.push({ artistID: doc._id, oldestYear: uniqueArtist.oldest, newestYear: uniqueArtist.newest })
-        }
-      })
+      if (index < 5) {
+        commonArtists.push({
+          artistID: doc._id,
+          trackCount: uniqueArtistsByTracks[index].tracks,
+        })
+      } else {
+        classicArtists.push({
+          artistID: doc._id,
+          oldestYear: uniqueArtistsByGap[index - 5].oldest,
+          newestYear: uniqueArtistsByGap[index - 5].newest,
+        })
+      }
     }
 
     await LibrarySnapshot.findOneAndUpdate(
@@ -155,5 +157,10 @@ module.exports = async function (username) {
     )
   }
 
-  return await LibrarySnapshot.findOne({ username: username }).populate('artistID').lean().exec()
+  return await LibrarySnapshot.findOne({ username: username })
+    .select('-savedArtists')
+    .populate('commonArtists.artistID')
+    .populate('classicArtists.artistID')
+    .lean()
+    .exec()
 }

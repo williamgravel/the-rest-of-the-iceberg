@@ -35,6 +35,12 @@ const listSchema = Schema(
       percentInstrumental: Number,
       percentLive: Number,
     },
+    commonGenres: [
+      {
+        genreID: { type: Schema.Types.ObjectId, ref: 'Genre' },
+        artistIDs: [{ type: Schema.Types.ObjectId, ref: 'Artist' }],
+      },
+    ],
   },
   {
     timestamps: true,

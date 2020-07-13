@@ -1,5 +1,6 @@
 // DATABASE PACKAGE IMPORTS
 const mongoose = require('mongoose')
+const queryString = require('query-string')
 
 // CONFIG & ENVIRONMENT VARIABLES
 const config = require('./config')
@@ -12,14 +13,25 @@ const disconnected = chalk.bold.red
 const terminated = chalk.bold.magenta
 
 // MONGODB CONNECTION
-mongoose.connect(`mongodb://${config.db.host}:${config.db.port}/${config.db.name}`, {
+const mongooseOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
   useFindAndModify: false,
   keepAlive: true,
   keepAliveInitialDelay: 300000,
-})
+}
+
+if (config.env === 'development') {
+  mongoose.connect(`mongodb://${config.db.host}:${config.db.port}/${config.db.name}`, mongooseOptions)
+} else if (config.env === 'production') {
+  mongoose.connect(
+    `mongodb://${config.db.username}:${config.db.password}@${config.db.host}:${config.db.port}/${
+      config.db.name
+    }?${queryString.stringify(config.db.options)}`,
+    mongooseOptions
+  )
+}
 
 // CONNECTION LOGS
 mongoose.connection.on('connected', () => {

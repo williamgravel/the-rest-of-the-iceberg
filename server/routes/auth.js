@@ -2,7 +2,7 @@
 const express = require('express')
 const router = express.Router()
 const queryString = require('query-string')
-const axios = require('axios')
+const axios = require('axios').default
 const jwt = require('jsonwebtoken')
 
 // CONFIG & ENVIRONMENT VARIABLES
@@ -80,7 +80,8 @@ router.get('/spotify/callback', (req, res) => {
         }),
         {
           headers: {
-            'Authorization': 'Basic ' + new Buffer.from(config.api.client_id + ':' + config.api.client_secret).toString('base64'),
+            'Authorization':
+              'Basic ' + new Buffer.from(config.api.client_id + ':' + config.api.client_secret).toString('base64'),
           },
         }
       )
@@ -97,7 +98,11 @@ router.get('/spotify/callback', (req, res) => {
           .then((response) => {
             User.findOneAndUpdate(
               { username: response.data.id },
-              { displayName: response.data.display_name || response.data.id, accessToken: access_token, refreshToken: refresh_token },
+              {
+                displayName: response.data.display_name || response.data.id,
+                accessToken: access_token,
+                refreshToken: refresh_token,
+              },
               { upsert: true, new: true },
               function (err, doc) {
                 if (err) {

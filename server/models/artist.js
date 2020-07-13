@@ -10,12 +10,11 @@ const artistSchema = Schema({
     type: String,
     required: true,
   },
-  genres: [
-    {
-      type: String,
-    },
-  ],
   profilePic: {
+    type: String,
+    required: true,
+  },
+  spotifyURL: {
     type: String,
     required: true,
   },
