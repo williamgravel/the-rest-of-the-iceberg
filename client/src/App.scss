@@ -1,0 +1,76 @@
+// @import url('https://fonts.googleapis.com/css2?family=Kotta+One&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Croissant+One&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+@font-face {
+  font-family: 'Rocket Clouds';
+  src: url('./assets/Rocket Clouds.ttf') format('truetype');
+}
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1440px,
+);
+
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1380px,
+);
+
+body {
+  font-family: 'Lato', sans-serif !important;
+  background-color: black !important;
+  // background: linear-gradient(to top, #000046, #1cb5e0);
+  // background: linear-gradient(to right, #e96443, #904e95);
+}
+
+#tsparticles {
+  position: absolute;
+}
+
+@import '../node_modules/bootstrap/scss/bootstrap.scss';
+
+html {
+  scroll-behavior: smooth;
+  font-size: 1rem;
+}
+
+@include media-breakpoint-up(sm) {
+  html {
+    font-size: 1.05rem;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  html {
+    font-size: 1.1rem;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  html {
+    font-size: 1.15rem;
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  html {
+    font-size: 1.2rem;
+  }
+}
+
+@include media-breakpoint-up(xxl) {
+  html {
+    font-size: 1.25rem;
+  }
+}

@@ -51,7 +51,7 @@ spotify.interceptors.response.use(null, async (error) => {
         'https://accounts.spotify.com/api/token',
         queryString.stringify({
           grant_type: 'refresh_token',
-          refresh_token: user.refresh_token,
+          refresh_token: user.refreshToken,
         }),
         {
           headers: {
@@ -68,10 +68,9 @@ spotify.interceptors.response.use(null, async (error) => {
 
       return spotify.request(error.config)
     } catch (retryError) {
+      console.log(retryError)
       return Promise.reject(retryError)
     }
-  } else if (status === 400) {
-    throw new Error(error.message)
   } else {
     return Promise.reject(error)
   }

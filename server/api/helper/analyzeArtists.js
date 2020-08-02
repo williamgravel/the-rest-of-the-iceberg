@@ -44,6 +44,7 @@ module.exports = async function (username, artistList) {
     for (let j = 0; j < query.length; j++) {
       if (query[j].owner.display_name === 'The Sounds of Spotify') {
         uniqueGenres[i].url = query[j].external_urls.spotify
+        uniqueGenres[i].image = query[j].images[0].url
         break
       }
     }
@@ -52,7 +53,7 @@ module.exports = async function (username, artistList) {
   for (const [index, genre] of uniqueGenres.entries()) {
     const doc = await Genre.findOneAndUpdate(
       { name: genre.genre },
-      { playlistURL: genre.url },
+      { playlistImage: genre.image, playlistURL: genre.url },
       { upsert: true, new: true }
     )
       .select('_id')

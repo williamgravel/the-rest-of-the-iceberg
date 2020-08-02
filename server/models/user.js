@@ -9,6 +9,8 @@ const userSchema = Schema(
       unique: true,
     },
     displayName: String,
+    profilePic: String,
+    country: String,
     accessToken: String,
     refreshToken: String,
   },

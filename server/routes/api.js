@@ -13,6 +13,36 @@ router.use(require('../middleware/validateQuery'))
 
 // EXPRESS ROUTES
 router.get('/top', async (req, res) => {
+  const types = ['artists', 'tracks']
+  const ranges = ['short_term', 'medium_term', 'long_term']
+
+  const options = types.flatMap((type) =>
+    ranges.map((range) => {
+      return { queryType: type, timeRange: range }
+    })
+  )
+
+  const topResults = await Promise.all(
+    options.map((option) => {
+      return getTop(req.username, option)
+    })
+  )
+
+  res.json({
+    artists: {
+      short_term: topResults[0],
+      medium_term: topResults[1],
+      long_term: topResults[2],
+    },
+    tracks: {
+      short_term: topResults[3],
+      medium_term: topResults[4],
+      long_term: topResults[5],
+    },
+  })
+})
+
+router.get('/top/:queryType/:timeRange', async (req, res) => {
   const topResults = await getTop(req.username, {
     queryType: req.query.query_type,
     timeRange: req.query.time_range,

@@ -63,7 +63,7 @@ module.exports = async function (username, options) {
           {
             name: item.name,
             albumArt: item.album.images[0].url,
-            artistName: item.artist[0].name,
+            artistName: item.artists[0].name,
             spotifyURL: item.external_urls.spotify,
           },
           { upsert: true, new: true }

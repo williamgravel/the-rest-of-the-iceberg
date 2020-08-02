@@ -3,6 +3,7 @@
 
 # Config files
 **/.eslintrc.json
+**/.babelrc.json
 .prettierrc.json
 /.vscode
 

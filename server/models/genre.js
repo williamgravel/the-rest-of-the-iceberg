@@ -6,6 +6,10 @@ const genreSchema = Schema({
     type: String,
     required: true,
   },
+  playlistImage: {
+    type: String,
+    required: true,
+  },
   playlistURL: {
     type: String,
     required: true,

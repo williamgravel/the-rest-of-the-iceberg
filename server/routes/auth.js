@@ -35,15 +35,16 @@ let generateRandomString = function (length) {
 
 // AUTHENTICATION OPTIONS
 const state_key = 'spotify-auth-state'
-const scope = 'user-library-read user-top-read playlist-modify-public'
+const scope = 'user-read-private user-library-read user-top-read playlist-modify-public'
 
 // AUTHENTICATION CODE FLOW
-router.get('/spotify', (req, res) => {
+router.get('/spotify/login', (req, res) => {
   const state = generateRandomString(16)
   res.cookie(state_key, state)
 
-  res.redirect(
-    'https://accounts.spotify.com/authorize?' +
+  res.json({
+    redirect:
+      'https://accounts.spotify.com/authorize?' +
       queryString.stringify({
         client_id: config.api.client_id,
         response_type: 'code',
@@ -51,8 +52,8 @@ router.get('/spotify', (req, res) => {
         state: state,
         scope: scope,
         show_dialog: true,
-      })
-  )
+      }),
+  })
 })
 
 router.get('/spotify/callback', (req, res) => {
@@ -100,6 +101,8 @@ router.get('/spotify/callback', (req, res) => {
               { username: response.data.id },
               {
                 displayName: response.data.display_name || response.data.id,
+                profilePic: response.data.images[0].url,
+                country: response.data.country,
                 accessToken: access_token,
                 refreshToken: refresh_token,
               },
@@ -108,16 +111,11 @@ router.get('/spotify/callback', (req, res) => {
                 if (err) {
                   console.log(err)
                 } else {
-                  const token = jwt.sign(
-                    {
-                      username: doc.username,
-                      displayName: doc.displayName,
-                    },
-                    config.app.secret_key
-                  )
+                  const token = jwt.sign({ username: doc.username }, config.app.secret_key)
 
                   console.log(authorized('[SPOTIFY] USER AUTHENTICATED'))
                   res.cookie('token', token, { httpOnly: true })
+                  res.cookie('auth', true)
                   res.redirect('http://localhost:3000/')
                 }
               }
@@ -130,9 +128,15 @@ router.get('/spotify/callback', (req, res) => {
       })
       .catch((error) => {
         console.log('[AXIOS] POST REQUEST ERROR')
-        console.log(error)
+        res.redirect('http://localhost:3000/')
       })
   }
+})
+
+router.get('/spotify/logout', (req, res) => {
+  res.clearCookie('token')
+  res.clearCookie('auth')
+  res.sendStatus(200)
 })
 
 module.exports = router
