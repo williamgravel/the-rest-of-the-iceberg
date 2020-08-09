@@ -1,61 +1,103 @@
 // PACKAGE IMPORTS
 import React, { useContext, useState } from 'react'
-import 'animate.css/animate.min.css'
-// import { useCountUp } from 'react-countup'
+import LazyLoad from 'react-lazyload'
+import { useCountUp } from 'react-countup'
 
 // GLOBAL CONTEXT
 import { LibContext } from '../global/globalContexts'
 
+// UTIL FUNCTIONS
+import trimText from '../utils/trimText'
+
 // COMPONENTS
 import { Container, Row, Col } from 'react-bootstrap'
-import {
-  Heading,
-  ImageWrapper,
-  Image,
-  Square,
-  List,
-  Item,
-  ItemPrefix,
-  ItemTitle,
-  ItemSubtitle,
-  ButtonWrapper,
-  ArtistSwitchButton,
-  ButtonText,
-} from './LargeComponents'
+import { Heading, Box } from './Section'
+import { List, ListItem } from './List'
+import { ButtonWrapper, ButtonText, ArtistListButton } from './ActionButtons'
+import { LargeThumbnail } from './Thumbnail'
 
-// function CountUpNumber(props) {
-//   const { countUp } = useCountUp({ end: props.number, delay: 2, duration: 2 })
-//   return <span>{countUp}</span>
-// }
+const Counter = ({ children, color, decimals, delay, suffix }) => {
+  const { countUp } = useCountUp({
+    end: children,
+    decimals: decimals || 0,
+    delay: delay,
+    duration: 2,
+    suffix: suffix || '',
+  })
+  return <Box.Stat color={color}>{countUp}</Box.Stat>
+}
 
-function LibStats() {
+const LibStats = () => {
   const libData = useContext(LibContext)
 
   return (
-    <Container fluid style={{ userSelect: 'none' }}>
-      <Row className='align-items-end' style={{ marginBottom: '40px' }}>
+    <Container fluid>
+      <Row className='align-items-end' style={{ marginBottom: '60px' }}>
         <Col></Col>
         <Col lg={7}>
           <Heading>Your Stats</Heading>
         </Col>
         <Col></Col>
       </Row>
-
-      <Row>
-        <Col lg={6} className='d-flex justify-content-end '></Col>
-        <Col lg={6} className='d-flex justify-content-start'></Col>
-      </Row>
+      <LazyLoad height={680} once>
+        <Row className='justify-content-center'>
+          <Col lg={9} className='d-flex flex-wrap justify-content-center'>
+            <Box>
+              <Box.Text>total of</Box.Text>
+              <Counter color='red' delay={1}>
+                {libData.totalTracks}
+              </Counter>
+              <Box.Text>tracks saved</Box.Text>
+            </Box>
+            <Box>
+              <Box.Text>total of</Box.Text>
+              <Counter color='pink' delay={2.5}>
+                {libData.totalArtists}
+              </Counter>
+              <Box.Text>artists saved</Box.Text>
+            </Box>
+            <Box>
+              <Box.Text>total of</Box.Text>
+              <Counter color='purple' delay={4} suffix='h'>
+                {Math.round(libData.totalPlaytime / 3.6e6)}
+              </Counter>
+              <Box.Text>of playtime</Box.Text>
+            </Box>
+            <Box>
+              <Box.Text>library around</Box.Text>
+              <Counter color='yellow' decimals={1} delay={5.5} suffix='%'>
+                {Math.round(libData.percentExplicit * 10) / 10}
+              </Counter>
+              <Box.Text>explicit</Box.Text>
+            </Box>
+            <Box>
+              <Box.Text>average of</Box.Text>
+              <Counter color='green' decimals={1} delay={7}>
+                {Math.round(libData.tracksPerArtist.mean * 10) / 10}
+              </Counter>
+              <Box.Text>tracks saved per artist</Box.Text>
+            </Box>
+            <Box>
+              <Box.Text>median of</Box.Text>
+              <Counter color='blue' delay={8.5} suffix='d'>
+                {Math.round(libData.daysUntilSave.median)}
+              </Counter>
+              <Box.Text>until saving a track</Box.Text>
+            </Box>
+          </Col>
+        </Row>
+      </LazyLoad>
     </Container>
   )
 }
 
-function LibArtists() {
+const LibArtists = () => {
   const libData = useContext(LibContext)
   const [list, setList] = useState('commonArtists')
   const [pos, setPos] = useState(0)
 
   return (
-    <Container fluid style={{ userSelect: 'none' }}>
+    <Container fluid>
       <Row className='align-items-end' style={{ marginBottom: '40px' }}>
         <Col></Col>
         <Col lg={7}>
@@ -66,41 +108,38 @@ function LibArtists() {
               list === 'commonArtists' ? setList('classicArtists') : setList('commonArtists')
             }}
           >
-            <ArtistSwitchButton />
+            <ArtistListButton />
             <ButtonText>switch list</ButtonText>
           </ButtonWrapper>
         </Col>
-
         <Col></Col>
       </Row>
-
       <Row>
-        <Col lg={6} className='d-flex justify-content-end '>
-          <ImageWrapper>
-            <Square color={list === 'commonArtists' ? 'blue' : 'green'} />
-            <Image src={libData[list][pos].artistID.profilePic} alt={libData[list][pos].artistID.name} />
-          </ImageWrapper>
+        <Col lg={6} className='d-flex justify-content-end'>
+          <LargeThumbnail
+            src={libData[list][pos].artistID.profilePic}
+            alt={libData[list][pos].artistID.name}
+            color={list === 'commonArtists' ? 'blue' : 'green'}
+          />
         </Col>
         <Col lg={6} className='d-flex justify-content-start'>
           <List>
             {libData[list].map((artist, index) => (
-              <Item
+              <ListItem
                 key={artist.artistID.spotifyID}
                 color={list === 'commonArtists' ? 'blue' : 'green'}
                 className={pos === index ? 'active' : ''}
               >
-                <ItemPrefix className='counter' onMouseEnter={() => setPos(index)}>
-                  {index + 1}
-                </ItemPrefix>
-                <ItemTitle href={artist.artistID.spotifyURL} onMouseEnter={() => setPos(index)}>
-                  {artist.artistID.name.length <= 25 ? artist.artistID.name : artist.artistID.name.slice(0, 22) + '...'}
-                </ItemTitle>
-                <ItemSubtitle className='text' onMouseEnter={() => setPos(index)}>
+                <ListItem.Prefix onMouseEnter={() => setPos(index)}>{index + 1}</ListItem.Prefix>
+                <ListItem.Title href={artist.artistID.spotifyURL} onMouseEnter={() => setPos(index)}>
+                  {trimText(artist.artistID.name, 25)}
+                </ListItem.Title>
+                <ListItem.Subtitle onMouseEnter={() => setPos(index)}>
                   {list === 'commonArtists'
                     ? `${artist.trackCount} tracks`
                     : `${artist.newestYear - artist.oldestYear} years`}
-                </ItemSubtitle>
-              </Item>
+                </ListItem.Subtitle>
+              </ListItem>
             ))}
           </List>
         </Col>

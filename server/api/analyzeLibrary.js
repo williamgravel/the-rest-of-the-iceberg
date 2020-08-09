@@ -1,8 +1,12 @@
 // PACKAGE IMPORTS
 const queryString = require('query-string')
 const spotify = require('./spotify')
-const moment = require('moment')
 const stats = require('simple-statistics')
+
+// DATE MANIPULATION
+const dayjs = require('dayjs')
+const isBetween = require('dayjs/plugin/isBetween')
+dayjs.extend(isBetween)
 
 // DATABASE MODELS
 const LibrarySnapshot = require('../models/librarySnapshot')
@@ -10,7 +14,7 @@ const Artist = require('../models/artist')
 
 module.exports = async function (username) {
   const doc = await LibrarySnapshot.findOne({ username: username }).select('updatedAt').exec()
-  if (!doc || !moment(doc.updatedAt.getTime(), 'x').isBetween(moment().subtract(7, 'd'), moment(), 'd', '(]')) {
+  if (!doc || !dayjs(doc.updatedAt.getTime(), 'x').isBetween(dayjs().subtract(7, 'd'), dayjs(), 'd', '(]')) {
     let apiURL =
       'https://api.spotify.com/v1/me/tracks?' +
       queryString.stringify({
@@ -70,7 +74,7 @@ module.exports = async function (username) {
 
         // Keep track of days between release and save, total track playtime, and explicit track count
         if (item.track.album.release_date_precision === 'day') {
-          daysUntilSave.push(moment(item.added_at).diff(moment(item.track.album.release_date, 'YYYY-MM-DD'), 'd'))
+          daysUntilSave.push(dayjs(item.added_at).diff(dayjs(item.track.album.release_date, 'YYYY-MM-DD'), 'd'))
         }
         totalPlaytime += item.track.duration_ms
         if (item.track.explicit) {

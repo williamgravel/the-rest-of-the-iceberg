@@ -128,6 +128,7 @@ router.get('/spotify/callback', (req, res) => {
       })
       .catch((error) => {
         console.log('[AXIOS] POST REQUEST ERROR')
+        console.log(error)
         res.redirect('http://localhost:3000/')
       })
   }

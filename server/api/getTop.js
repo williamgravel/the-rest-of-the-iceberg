@@ -1,7 +1,11 @@
 // PACKAGE IMPORTS
 const queryString = require('query-string')
 const spotify = require('./spotify')
-const moment = require('moment')
+
+// DATE MANIPULATION
+const dayjs = require('dayjs')
+const isBetween = require('dayjs/plugin/isBetween')
+dayjs.extend(isBetween)
 
 // SPOTIFY API FUNCTIONS
 const analyzeArtists = require('./helper/analyzeArtists')
@@ -16,7 +20,7 @@ module.exports = async function (username, options) {
   const doc = await TopList.findOne({ username: username, queryType: options.queryType, timeRange: options.timeRange })
     .select('updatedAt')
     .exec()
-  if (!doc || !moment(doc.updatedAt.getTime(), 'x').isBetween(moment().subtract(7, 'd'), moment(), 'd', '(]')) {
+  if (!doc || !dayjs(doc.updatedAt.getTime(), 'x').isBetween(dayjs().subtract(7, 'd'), dayjs(), 'd', '(]')) {
     const response = await spotify.get(
       'https://api.spotify.com/v1/me/top/' +
         options.queryType +

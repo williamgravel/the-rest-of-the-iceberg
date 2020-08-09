@@ -12,8 +12,12 @@ const LibrarySnapshot = require('../models/librarySnapshot')
 function sample(pool, k) {
   const n = pool.length
 
-  if (k < 0 || k > n) {
+  if (k < 0) {
     throw new RangeError('Sample larger than population or is negative')
+  }
+
+  if (k > n) {
+    return pool
   }
 
   if (n <= (k <= 5 ? 21 : 21 + Math.pow(4, Math.ceil(Math.log(k * 3, 4))))) {
@@ -88,7 +92,7 @@ const exploreTaste = async function (username, options) {
       .populate('list')
       .lean()
       .exec()
-    const topArtists = top.list.map((artist) => artist.spotifyID)
+    const topArtists = top.list.slice(options.maxTopArtists).map((artist) => artist.spotifyID)
     let checkArtists = new Set()
     let checkTracks = new Set()
 
@@ -102,9 +106,7 @@ const exploreTaste = async function (username, options) {
 
     for (let i = 0; i < responsesA.length; i++) {
       let tempArtists = responsesA[i].data.artists.map((artist) => artist.id)
-      if (tempArtists.length > options.maxRelArtists) {
-        tempArtists = sample(tempArtists, options.maxRelArtists)
-      }
+      tempArtists = sample(tempArtists, options.maxRelArtists)
       for (let i = 0; i < tempArtists.length; i++) {
         checkArtists.add(tempArtists[i])
       }
@@ -128,9 +130,7 @@ const exploreTaste = async function (username, options) {
 
     for (let i = 0; i < responsesB.length; i++) {
       let tempTracks = responsesB[i].data.tracks.map((track) => track.id)
-      if (tempTracks.length > options.maxTopTracks) {
-        tempTracks = sample(tempTracks.slice(5), options.maxTopTracks)
-      }
+      tempTracks = sample(tempTracks.slice(5), options.maxTopTracks)
       for (let i = 0; i < tempTracks.length; i++) {
         checkTracks.add(tempTracks[i])
       }
@@ -155,31 +155,37 @@ const exploreTaste = async function (username, options) {
     return playlistRes.data.external_urls.spotify
   } catch (error) {
     console.log(error)
+    return null
   }
 }
 
 const secondChance = async function (username, options) {
   try {
     const library = await LibrarySnapshot.findOne({ username: username }).select('savedArtists.single').exec()
-    const randArtists = sample(library.savedArtists.single, 30)
+    let randArtists = sample(library.savedArtists.single, options.maxSavedArtists)
     let checkTracks = new Set()
 
-    const responses = await Promise.all(
+    if (options.excludePopular && options.popularityThreshold) {
+      const responseA = await spotify.get(
+        'https://api.spotify.com/v1/artists?' + queryString.stringify({ ids: randArtists }),
+        { headers: { 'User-ID': username } }
+      )
+
+      randArtists.filter((artist, index) => responseA.data.artists[index].popularity < options.popularityThreshold)
+    }
+
+    const responsesB = await Promise.all(
       randArtists.map((artist) => {
         return spotify.get(
           `https://api.spotify.com/v1/artists/${artist}/top-tracks?` + queryString.stringify({ country: 'from_token' }),
-          {
-            headers: { 'User-ID': username },
-          }
+          { headers: { 'User-ID': username } }
         )
       })
     )
 
-    for (let i = 0; i < responses.length; i++) {
-      let tempTracks = responses[i].data.tracks.map((track) => track.id)
-      if (tempTracks.length > options.maxTopTracks) {
-        tempTracks = sample(tempTracks.slice(5), options.maxTopTracks)
-      }
+    for (let i = 0; i < responsesB.length; i++) {
+      let tempTracks = responsesB[i].data.tracks.map((track) => track.id)
+      tempTracks = sample(tempTracks.slice(5), options.maxTopTracks)
       for (let i = 0; i < tempTracks.length; i++) {
         checkTracks.add(tempTracks[i])
       }
@@ -204,6 +210,7 @@ const secondChance = async function (username, options) {
     return playlistRes.data.external_urls.spotify
   } catch (error) {
     console.log(error)
+    return null
   }
 }
 

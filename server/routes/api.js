@@ -57,25 +57,29 @@ router.get('/library', async (req, res) => {
 
 router.get('/playlist/explore', async (req, res) => {
   const playlistURL = await generatePlaylist.exploreSeed(req.username, {
-    timeRange: req.query.time_range,
+    timeRange: req?.body?.timeRange || 'short_term',
   })
-  res.redirect(playlistURL)
+  res.json(playlistURL)
 })
 
 router.get('/playlist/explore/v2', async (req, res) => {
   const playlistURL = await generatePlaylist.exploreTaste(req.username, {
-    timeRange: req.query.time_range,
-    maxRelArtists: 5,
-    maxTopTracks: 3,
+    timeRange: req?.body?.timeRange || 'short_term',
+    maxTopArtists: req?.body?.maxTopArtists || 50,
+    maxRelArtists: req?.body?.maxRelArtists || 5,
+    maxTopTracks: req?.body?.maxTopTracks || 3,
   })
-  res.redirect(playlistURL)
+  res.json(playlistURL)
 })
 
 router.get('/playlist/second', async (req, res) => {
   const playlistURL = await generatePlaylist.secondChance(req.username, {
-    maxTopTracks: 3,
+    maxSavedArtists: req?.body?.maxSavedArtists || 30,
+    excludePopular: req?.body?.excludePopular || false,
+    popularityThreshold: req?.body?.popularityThreshold || undefined,
+    maxTopTracks: req?.body?.maxTopTracks || 3,
   })
-  res.redirect(playlistURL)
+  res.json(playlistURL)
 })
 
 module.exports = router

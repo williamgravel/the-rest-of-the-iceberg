@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 const ProgressBar = styled.div`
   position: sticky;
-  background-color: ${(props) => props.theme.dark.color};
+  background-color: white;
   top: 0;
   height: 4px;
   width: ${(props) => (props.progress ? `${props.progress}%` : '0%')};

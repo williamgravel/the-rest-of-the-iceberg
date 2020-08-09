@@ -1,9 +1,13 @@
+// APP STYLING
+import './App.scss'
+
 // PACKAGE IMPORTS
 import React, { useState, useEffect, useReducer } from 'react'
 import axios from 'axios'
 import Fullpage from '@fullpage/react-fullpage'
 import Particles from 'react-tsparticles'
 import particlesOptions from './particles.json'
+import { forceCheck } from 'react-lazyload'
 
 // GLOBAL VARIBLES
 import { ThemeProvider } from 'styled-components'
@@ -11,13 +15,11 @@ import { AuthContext, LibContext, TopContext, TimeContext } from './global/globa
 import { init, reducer } from './global/timeRangeReducer'
 import { themeV3 } from './global/globalTheme'
 
-// APP STYLING
-import './App.scss'
-
 // CUSTOM COMPONENTS
 import Header from './components/Header'
 import { LibStats, LibArtists } from './components/LibraryOverview'
 import { TopArtists, CommonGenres, TopTracks, AudioFeatures } from './components/TopItems'
+import CustomPlaylists from './components/CustomPlaylists'
 
 function App() {
   const [authStatus, setAuthStatus] = useState(false)
@@ -29,17 +31,14 @@ function App() {
     if (document.cookie.split(';').some((item) => item.includes('auth=true'))) {
       setAuthStatus(true)
     }
-    if (authStatus && !libData) {
-      axios.get('/api/library').then((response) => {
-        setLibData(response.data)
-      })
+    if (authStatus) {
+      ;(async function getUserData() {
+        const [libResponse, topResponse] = await Promise.all([axios.get('/api/library'), axios.get('/api/top')])
+        setLibData(libResponse.data)
+        setTopData(topResponse.data)
+      })()
     }
-    if (authStatus && !topData) {
-      axios.get('/api/top').then((response) => {
-        setTopData(response.data)
-      })
-    }
-  }, [authStatus, libData, topData])
+  }, [authStatus])
 
   return (
     <>
@@ -47,7 +46,22 @@ function App() {
       <Fullpage
         licenseKey={'E2CB5B80-44174E5C-8A9056CE-1041B060'}
         scrollingSpeed='700'
+        navigation={true}
+        navigationPosition='left'
+        navigationTooltips={[
+          'Home',
+          'Library Stats',
+          'Library Artists',
+          'Top Artists',
+          'Common Genres',
+          'Top Tracks',
+          'Audio Features',
+          'Custom Playlists',
+        ]}
         afterRender={() => {}}
+        onLeave={(origin, destination, direction) => {
+          if (destination.index === 1) setTimeout(forceCheck, 400)
+        }}
         render={({ state, fullpageApi }) => {
           return (
             <Fullpage.Wrapper>
@@ -101,6 +115,10 @@ function App() {
                         <AudioFeatures />
                       </TopContext.Provider>
                     </TimeContext.Provider>
+                  </div>
+
+                  <div className='section'>
+                    <CustomPlaylists />
                   </div>
                 </ThemeProvider>
               ) : (

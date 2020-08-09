@@ -1,26 +1,18 @@
 // PACKAGE IMPORTS
 import React, { useContext, useState } from 'react'
-import 'animate.css/animate.min.css'
 
 // GLOBAL CONTEXT
 import { TopContext, TimeContext } from '../global/globalContexts'
 
+// UTIL FUNCTIONS
+import trimText from '../utils/trimText'
+
 // COMPONENTS
 import { Container, Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap'
-import {
-  Heading,
-  ImageWrapper,
-  Image,
-  Square,
-  List,
-  Item,
-  ItemPrefix,
-  ItemTitle,
-  ItemSubtitle,
-  ButtonWrapper,
-  TimeRangeButton,
-  ButtonText,
-} from './LargeComponents'
+import { Heading } from './Section'
+import { List, ListItem } from './List'
+import { ButtonWrapper, ButtonText, TimeRangeButton } from './ActionButtons'
+import { LargeThumbnail } from './Thumbnail'
 
 function TimeRangeSwitcher() {
   const [timeRange, timeRangeDispatch] = useContext(TimeContext)
@@ -46,34 +38,30 @@ function ListRow(props) {
 
   return (
     <Row>
-      <Col className='d-flex justify-content-end '>
-        <ImageWrapper>
-          <Square color={timeRange.color}></Square>
-          <Image
-            src={
-              topData[props.itemType][timeRange.value].list[pos].profilePic ||
-              topData[props.itemType][timeRange.value].list[pos].albumArt
-            }
-            alt={topData[props.itemType][timeRange.value].list[pos].name}
-          />
-        </ImageWrapper>
+      <Col className='d-flex justify-content-end'>
+        <LargeThumbnail
+          src={
+            topData[props.itemType][timeRange.value].list[pos].profilePic ||
+            topData[props.itemType][timeRange.value].list[pos].albumArt
+          }
+          alt={topData[props.itemType][timeRange.value].list[pos].name}
+          color={timeRange.color}
+        />
       </Col>
       <Col className='d-flex justify-content-start'>
         <List>
           {topData[props.itemType][timeRange.value].list.slice(0, 5).map((item, index) => (
-            <Item key={item.spotifyID} color={timeRange.color} className={pos === index ? 'active' : ''}>
-              <ItemPrefix className='counter' onMouseEnter={() => setPos(index)}>
-                {index + 1}
-              </ItemPrefix>
-              <ItemTitle href={item.spotifyURL} onMouseEnter={() => setPos(index)}>
-                {item.name.length <= 25 ? item.name : item.name.slice(0, 22) + '...'}
-              </ItemTitle>
+            <ListItem key={item.spotifyID} color={timeRange.color} className={pos === index ? 'active' : ''}>
+              <ListItem.Prefix onMouseEnter={() => setPos(index)}>{index + 1}</ListItem.Prefix>
+              <ListItem.Title href={item.spotifyURL} onMouseEnter={() => setPos(index)}>
+                {trimText(item.name, 25)}
+              </ListItem.Title>
               {props.itemType === 'tracks' && (
-                <ItemSubtitle className='text' onMouseEnter={() => setPos(index)}>
-                  {item.artistName.length <= 20 ? item.artistName : item.artistName.slice(0, 17) + '...'}
-                </ItemSubtitle>
+                <ListItem.Subtitle onMouseEnter={() => setPos(index)}>
+                  {trimText(item.artistName, 20)}
+                </ListItem.Subtitle>
               )}
-            </Item>
+            </ListItem>
           ))}
         </List>
       </Col>
@@ -83,8 +71,8 @@ function ListRow(props) {
 
 function TopArtists() {
   return (
-    <Container fluid style={{ userSelect: 'none' }}>
-      <Row style={{ marginBottom: '60px' }}>
+    <Container fluid>
+      <Row style={{ marginBottom: '40px' }}>
         <Col></Col>
         <Col lg={7}>
           <Heading>Top Artists</Heading>
@@ -99,8 +87,8 @@ function TopArtists() {
 
 function CommonGenres() {
   return (
-    <Container fluid style={{ userSelect: 'none' }}>
-      <Row style={{ marginBottom: '60px' }}>
+    <Container fluid>
+      <Row style={{ marginBottom: '40px' }}>
         <Col></Col>
         <Col lg={7}>
           <Heading>Top Genres</Heading>
@@ -114,8 +102,8 @@ function CommonGenres() {
 
 function TopTracks() {
   return (
-    <Container fluid style={{ userSelect: 'none' }}>
-      <Row style={{ marginBottom: '60px' }}>
+    <Container fluid>
+      <Row style={{ marginBottom: '40px' }}>
         <Col></Col>
         <Col lg={7}>
           <Heading>Top Tracks</Heading>
@@ -130,8 +118,8 @@ function TopTracks() {
 
 function AudioFeatures() {
   return (
-    <Container fluid style={{ userSelect: 'none' }}>
-      <Row style={{ marginBottom: '60px' }}>
+    <Container fluid>
+      <Row style={{ marginBottom: '40px' }}>
         <Col></Col>
         <Col lg={7}>
           <Heading>Audio Features</Heading>
