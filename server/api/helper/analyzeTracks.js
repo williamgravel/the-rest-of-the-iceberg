@@ -14,15 +14,10 @@ module.exports = async function (username, trackList) {
     energy: stats.mean(response.data.audio_features.map((track) => track.energy)),
     valence: stats.mean(response.data.audio_features.map((track) => track.valence)),
     percentAcoustic:
-      response.data.audio_features.map((track) => track.acousticness).filter((acousticness) => acousticness >= 0.8)
-        .length / trackList.length,
+      response.data.audio_features.filter((track) => track.acousticness >= 0.8).length / trackList.length,
     percentInstrumental:
-      response.data.audio_features
-        .map((track) => track.instrumentalness)
-        .filter((instrumentalness) => instrumentalness >= 0.5).length / trackList.length,
-    percentLive:
-      response.data.audio_features.map((track) => track.liveness).filter((liveness) => liveness >= 0.8).length /
-      trackList.length,
+      response.data.audio_features.filter((track) => track.instrumentalness >= 0.5).length / trackList.length,
+    percentLive: response.data.audio_features.filter((track) => track.liveness >= 0.8).length / trackList.length,
   }
 
   return audioFeatures

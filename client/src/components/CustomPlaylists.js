@@ -3,8 +3,8 @@ import React, { useState } from 'react'
 import axios from 'axios'
 
 // COMPONENTS
-import { Container, Row, Col } from 'react-bootstrap'
-import { Heading } from './Section'
+import { Container, Row, Col, Form } from 'react-bootstrap'
+import { RowHeading, Heading } from './Section'
 import { Button } from './ActionButtons'
 
 const GeneratePlaylist = async (e, playlistApi, setLoading) => {
@@ -35,18 +35,22 @@ function GeneratePlaylistButton(props) {
 
 function CustomPlaylists() {
   return (
-    <Container fluid style={{ userSelect: 'none' }}>
-      <Row style={{ marginBottom: '60px' }}>
-        <Col></Col>
+    <Container fluid>
+      <RowHeading>
         <Col lg={7}>
           <Heading>Custom Playlists</Heading>
         </Col>
-        <Col></Col>
-      </Row>
+      </RowHeading>
 
       <Row>
         <Col style={{ textAlign: 'center' }}>
           <GeneratePlaylistButton name='secondChancePlaylist' text='Generate playlist' api='second' />
+          <Form>
+            <Form.Group controlId='formBasicRangeCustom'>
+              <Form.Label>Range</Form.Label>
+              <Form.Control type='range' custom />
+            </Form.Group>
+          </Form>
         </Col>
       </Row>
     </Container>

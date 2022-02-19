@@ -85,6 +85,7 @@ const Button = styled.button`
   }
 
   &:disabled {
+    color: #ddd;
     background-color: ${(props) => props.theme.blue.tertiary.darker};
   }
 `

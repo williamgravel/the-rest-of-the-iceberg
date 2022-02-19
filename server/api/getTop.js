@@ -26,7 +26,7 @@ module.exports = async function (username, options) {
         options.queryType +
         '?' +
         queryString.stringify({
-          limit: 10,
+          limit: 50,
           time_range: options.timeRange,
         }),
       { headers: { 'User-ID': username } }

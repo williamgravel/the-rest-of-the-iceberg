@@ -1,5 +1,7 @@
 // PACKAGE IMPORTS
 import React, { useContext, useState } from 'react'
+import LazyLoad from 'react-lazyload'
+import { useCountUp } from 'react-countup'
 
 // GLOBAL CONTEXT
 import { TopContext, TimeContext } from '../global/globalContexts'
@@ -9,12 +11,12 @@ import trimText from '../utils/trimText'
 
 // COMPONENTS
 import { Container, Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { Heading } from './Section'
+import { RowHeading, ColBox, Heading, Box } from './Section'
 import { List, ListItem } from './List'
 import { ButtonWrapper, ButtonText, TimeRangeButton } from './ActionButtons'
 import { LargeThumbnail } from './Thumbnail'
 
-function TimeRangeSwitcher() {
+const TimeRangeSwitcher = () => {
   const [timeRange, timeRangeDispatch] = useContext(TimeContext)
 
   return (
@@ -31,7 +33,7 @@ function TimeRangeSwitcher() {
   )
 }
 
-function ListRow(props) {
+const ListRow = (props) => {
   const topData = useContext(TopContext)
   const [timeRange] = useContext(TimeContext)
   const [pos, setPos] = useState(0)
@@ -69,64 +71,65 @@ function ListRow(props) {
   )
 }
 
-function TopArtists() {
+const DanceabilityMetric = ({ delay, float }) => {
+  const topData = useContext(TopContext)
+  return (
+    <Box>
+      <Box.Text float={float}></Box.Text>
+    </Box>
+  )
+}
+
+const TopArtists = () => {
   return (
     <Container fluid>
-      <Row style={{ marginBottom: '40px' }}>
-        <Col></Col>
+      <RowHeading>
         <Col lg={7}>
           <Heading>Top Artists</Heading>
           <TimeRangeSwitcher />
         </Col>
-        <Col></Col>
-      </Row>
+      </RowHeading>
       <ListRow itemType='artists' />
     </Container>
   )
 }
 
-function CommonGenres() {
+const CommonGenres = () => {
   return (
     <Container fluid>
-      <Row style={{ marginBottom: '40px' }}>
-        <Col></Col>
+      <RowHeading>
         <Col lg={7}>
           <Heading>Top Genres</Heading>
           <TimeRangeSwitcher />
         </Col>
-        <Col></Col>
-      </Row>
+      </RowHeading>
     </Container>
   )
 }
 
-function TopTracks() {
+const TopTracks = () => {
   return (
     <Container fluid>
-      <Row style={{ marginBottom: '40px' }}>
-        <Col></Col>
+      <RowHeading>
         <Col lg={7}>
           <Heading>Top Tracks</Heading>
           <TimeRangeSwitcher />
         </Col>
-        <Col></Col>
-      </Row>
+      </RowHeading>
       <ListRow itemType='tracks' />
     </Container>
   )
 }
 
-function AudioFeatures() {
+const AudioFeatures = () => {
   return (
     <Container fluid>
-      <Row style={{ marginBottom: '40px' }}>
-        <Col></Col>
+      <RowHeading>
         <Col lg={7}>
           <Heading>Audio Features</Heading>
           <TimeRangeSwitcher />
         </Col>
-        <Col></Col>
-      </Row>
+      </RowHeading>
     </Container>
   )
 }

@@ -11,80 +11,134 @@ import trimText from '../utils/trimText'
 
 // COMPONENTS
 import { Container, Row, Col } from 'react-bootstrap'
-import { Heading, Box } from './Section'
+import { RowHeading, ColBox, Heading, Box } from './Section'
 import { List, ListItem } from './List'
 import { ButtonWrapper, ButtonText, ArtistListButton } from './ActionButtons'
 import { LargeThumbnail } from './Thumbnail'
 
-const Counter = ({ children, color, decimals, delay, suffix }) => {
+const TotalTracks = ({ delay, float }) => {
+  const libData = useContext(LibContext)
+  const { countUp } = useCountUp({ end: libData.totalTracks, delay: delay, duration: 2 })
+  return (
+    <Box>
+      <Box.Text float={float}>total of</Box.Text>
+      <Box.Stat float={float} color='red'>
+        {countUp}
+      </Box.Stat>
+      <Box.Text float={float}>tracks saved</Box.Text>
+    </Box>
+  )
+}
+
+const TotalArtists = ({ delay, float }) => {
+  const libData = useContext(LibContext)
+  const { countUp } = useCountUp({ end: libData.totalArtists, delay: delay, duration: 2 })
+  return (
+    <Box>
+      <Box.Text float={float}>total of</Box.Text>
+      <Box.Stat float={float} color='pink'>
+        {countUp}
+      </Box.Stat>
+      <Box.Text float={float}>artists saved</Box.Text>
+    </Box>
+  )
+}
+
+const TotalPlaytime = ({ delay, float }) => {
+  const libData = useContext(LibContext)
   const { countUp } = useCountUp({
-    end: children,
-    decimals: decimals || 0,
+    end: Math.round(libData.totalPlaytime / 3.6e6),
     delay: delay,
     duration: 2,
-    suffix: suffix || '',
+    suffix: 'h',
   })
-  return <Box.Stat color={color}>{countUp}</Box.Stat>
+  return (
+    <Box>
+      <Box.Text float={float}>total of</Box.Text>
+      <Box.Stat float={float} color='purple'>
+        {countUp}
+      </Box.Stat>
+      <Box.Text float={float}>of playtime</Box.Text>
+    </Box>
+  )
+}
+
+const PercentExplicit = ({ delay, float }) => {
+  const libData = useContext(LibContext)
+  const { countUp } = useCountUp({
+    end: Math.round(libData.percentExplicit * 10) / 10,
+    decimals: 1,
+    delay: delay,
+    duration: 2,
+    suffix: '%',
+  })
+  return (
+    <Box>
+      <Box.Text float={float}>library around</Box.Text>
+      <Box.Stat float={float} color='yellow'>
+        {countUp}
+      </Box.Stat>
+      <Box.Text float={float}>explicit</Box.Text>
+    </Box>
+  )
+}
+
+const TracksPerArtist = ({ delay, float }) => {
+  const libData = useContext(LibContext)
+  const { countUp } = useCountUp({
+    end: Math.round(libData.tracksPerArtist.mean * 10) / 10,
+    decimals: 1,
+    delay: delay,
+    duration: 2,
+  })
+  return (
+    <Box>
+      <Box.Text float={float}>average of</Box.Text>
+      <Box.Stat float={float} color='green'>
+        {countUp}
+      </Box.Stat>
+      <Box.Text float={float}>tracks saved per artist</Box.Text>
+    </Box>
+  )
+}
+
+const DaysUntilSave = ({ delay, float }) => {
+  const libData = useContext(LibContext)
+  const { countUp } = useCountUp({
+    end: Math.round(libData.daysUntilSave.median),
+    delay: delay,
+    duration: 2,
+    suffix: 'd',
+  })
+  return (
+    <Box>
+      <Box.Text float={float}>median of</Box.Text>
+      <Box.Stat float={float} color='blue'>
+        {countUp}
+      </Box.Stat>
+      <Box.Text float={float}>until saving a track</Box.Text>
+    </Box>
+  )
 }
 
 const LibStats = () => {
-  const libData = useContext(LibContext)
-
   return (
     <Container fluid>
-      <Row className='align-items-end' style={{ marginBottom: '60px' }}>
-        <Col></Col>
+      <RowHeading>
         <Col lg={7}>
           <Heading>Your Stats</Heading>
         </Col>
-        <Col></Col>
-      </Row>
+      </RowHeading>
       <LazyLoad height={680} once>
         <Row className='justify-content-center'>
-          <Col lg={9} className='d-flex flex-wrap justify-content-center'>
-            <Box>
-              <Box.Text>total of</Box.Text>
-              <Counter color='red' delay={1}>
-                {libData.totalTracks}
-              </Counter>
-              <Box.Text>tracks saved</Box.Text>
-            </Box>
-            <Box>
-              <Box.Text>total of</Box.Text>
-              <Counter color='pink' delay={2.5}>
-                {libData.totalArtists}
-              </Counter>
-              <Box.Text>artists saved</Box.Text>
-            </Box>
-            <Box>
-              <Box.Text>total of</Box.Text>
-              <Counter color='purple' delay={4} suffix='h'>
-                {Math.round(libData.totalPlaytime / 3.6e6)}
-              </Counter>
-              <Box.Text>of playtime</Box.Text>
-            </Box>
-            <Box>
-              <Box.Text>library around</Box.Text>
-              <Counter color='yellow' decimals={1} delay={5.5} suffix='%'>
-                {Math.round(libData.percentExplicit * 10) / 10}
-              </Counter>
-              <Box.Text>explicit</Box.Text>
-            </Box>
-            <Box>
-              <Box.Text>average of</Box.Text>
-              <Counter color='green' decimals={1} delay={7}>
-                {Math.round(libData.tracksPerArtist.mean * 10) / 10}
-              </Counter>
-              <Box.Text>tracks saved per artist</Box.Text>
-            </Box>
-            <Box>
-              <Box.Text>median of</Box.Text>
-              <Counter color='blue' delay={8.5} suffix='d'>
-                {Math.round(libData.daysUntilSave.median)}
-              </Counter>
-              <Box.Text>until saving a track</Box.Text>
-            </Box>
-          </Col>
+          <ColBox lg={9}>
+            <TotalTracks delay={1} float={15} />
+            <TotalArtists delay={2.5} float={20} />
+            <TotalPlaytime delay={4} float={10} />
+            <PercentExplicit delay={5.5} float={25} />
+            <TracksPerArtist delay={7} float={15} />
+            <DaysUntilSave delay={8.5} float={20} />
+          </ColBox>
         </Row>
       </LazyLoad>
     </Container>
@@ -98,8 +152,7 @@ const LibArtists = () => {
 
   return (
     <Container fluid>
-      <Row className='align-items-end' style={{ marginBottom: '40px' }}>
-        <Col></Col>
+      <RowHeading>
         <Col lg={7}>
           <Heading>{list === 'commonArtists' ? 'Common Artists' : 'Classic Artists'}</Heading>
           <ButtonWrapper
@@ -112,8 +165,7 @@ const LibArtists = () => {
             <ButtonText>switch list</ButtonText>
           </ButtonWrapper>
         </Col>
-        <Col></Col>
-      </Row>
+      </RowHeading>
       <Row>
         <Col lg={6} className='d-flex justify-content-end'>
           <LargeThumbnail

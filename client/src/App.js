@@ -32,8 +32,12 @@ function App() {
       setAuthStatus(true)
     }
     if (authStatus) {
-      ;(async function getUserData() {
-        const [libResponse, topResponse] = await Promise.all([axios.get('/api/library'), axios.get('/api/top')])
+      (async function getUserData() {
+        const [libResponse, topResponse, globalResponse] = await Promise.all([
+          axios.get('/api/library'),
+          axios.get('/api/top'),
+          axios.get('/api/global'),
+        ])
         setLibData(libResponse.data)
         setTopData(topResponse.data)
       })()
@@ -42,7 +46,7 @@ function App() {
 
   return (
     <>
-      <Particles options={particlesOptions} />
+      <Particles className='d-none d-lg-block' options={particlesOptions} />
       <Fullpage
         licenseKey={'E2CB5B80-44174E5C-8A9056CE-1041B060'}
         scrollingSpeed='700'

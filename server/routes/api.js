@@ -3,8 +3,9 @@ const express = require('express')
 const router = express.Router()
 
 // SPOTIFY API FUNCTIONS
-const getTop = require('../api/getTop')
 const analyzeLibrary = require('../api/analyzeLibrary')
+const getTop = require('../api/getTop')
+const getGlobal = require('../api/getGlobal')
 const generatePlaylist = require('../api/generatePlaylist')
 
 // ROUTER MIDDLEWARE
@@ -12,6 +13,11 @@ router.use(require('../middleware/verifyUser'))
 router.use(require('../middleware/validateQuery'))
 
 // EXPRESS ROUTES
+router.get('/library', async (req, res) => {
+  const libraryResults = await analyzeLibrary(req.username)
+  res.json(libraryResults)
+})
+
 router.get('/top', async (req, res) => {
   const types = ['artists', 'tracks']
   const ranges = ['short_term', 'medium_term', 'long_term']
@@ -50,9 +56,9 @@ router.get('/top/:queryType/:timeRange', async (req, res) => {
   res.json(topResults)
 })
 
-router.get('/library', async (req, res) => {
-  const libraryResults = await analyzeLibrary(req.username)
-  res.json(libraryResults)
+router.get('/global', async (req, res) => {
+  const globalResults = await getGlobal(req.username)
+  res.json(globalResults)
 })
 
 router.get('/playlist/explore', async (req, res) => {

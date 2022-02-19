@@ -29,13 +29,13 @@ export const init = (initialState) => {
 export const reducer = (state, action) => {
   let index
   switch (action.type) {
-    case 'cycle':
-      index = timeRangeList.findIndex((option) => option.value === state.value)
-      return timeRangeList[index === 2 ? 0 : index + 1]
-    case 'set':
-      index = timeRangeList.findIndex((option) => option.value === action.value)
-      return timeRangeList[index]
-    default:
-      throw new Error()
+  case 'cycle':
+    index = timeRangeList.findIndex((option) => option.value === state.value)
+    return timeRangeList[index === 2 ? 0 : index + 1]
+  case 'set':
+    index = timeRangeList.findIndex((option) => option.value === action.value)
+    return timeRangeList[index]
+  default:
+    throw new Error()
   }
 }
