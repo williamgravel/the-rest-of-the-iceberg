@@ -10,7 +10,7 @@ import particlesOptions from './particles.json'
 import { forceCheck } from 'react-lazyload'
 
 // GLOBAL VARIABLES
-import { ThemeProvider } from 'styled-components'
+import { ThemeProvider } from 'styled-components/macro'
 import { AuthContext, LibContext, TopContext, TimeContext } from './global/globalContexts'
 import { init, reducer } from './global/timeRangeReducer'
 import { themeV3 } from './global/globalTheme'

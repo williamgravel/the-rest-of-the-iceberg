@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components'
+import styled, { keyframes } from 'styled-components/macro'
 import { Row, Col } from 'react-bootstrap'
 
 const fadeIn = keyframes`
@@ -83,7 +83,7 @@ const Heading = styled.h1`
   font-family: 'Rocket Clouds', sans-serif !important;
   color: ${(props) => props.theme.light.color};
   font-size: 5.5em;
-  line-height: 100%;
+  line-height: normal;
   /* font-style: italic; */
   font-weight: bold;
   text-shadow: 3px 3px 1px ${(props) => props.theme.light.accent};

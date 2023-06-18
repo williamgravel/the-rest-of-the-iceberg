@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 
 const List = styled.ul`
   list-style-type: none;

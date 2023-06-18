@@ -48,7 +48,7 @@ function CustomPlaylists() {
           <Form>
             <Form.Group controlId='formBasicRangeCustom'>
               <Form.Label>Range</Form.Label>
-              <Form.Control type='range' custom />
+              <Form.Control type='range' />
             </Form.Group>
           </Form>
         </Col>
