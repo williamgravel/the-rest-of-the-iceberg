@@ -1,7 +1,7 @@
 // PACKAGE IMPORTS
 import React, { useContext } from 'react'
 import axios from 'axios'
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import IcebergOutline from '../assets/icebergOutline.png'
 import IcebergFilled from '../assets/icebergFilled.png'
 

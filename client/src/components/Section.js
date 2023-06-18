@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components/macro'
+import styled, { keyframes } from 'styled-components'
 import { Row, Col } from 'react-bootstrap'
 
 const fadeIn = keyframes`

@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { HourGlass } from '@styled-icons/entypo'
 import { ArrowsRightLeft } from '@styled-icons/heroicons-outline'
 // import {
