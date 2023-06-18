@@ -19,12 +19,12 @@ const fadeIn = keyframes`
 //   }
 // `
 
-const float = keyframes`
+const float = (y) => keyframes`
   0% {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(20px);
+    transform: translateY(${y}px);
   }
   100% {
     transform: translateY(-0px);
@@ -71,7 +71,7 @@ const Title = styled.h1`
   text-shadow: 3px 3px 1px ${(props) => props.theme.light.accent};
 
   /* animation */
-  animation: ${float} 8s ease-in-out infinite;
+  animation: ${float(20)} 8s ease-in-out infinite;
 `
 
 const Heading = styled.h1`
@@ -135,18 +135,7 @@ Box.Text = styled.span`
   line-height: 120%;
 
   /* animation */
-  animation: float 6s ease-in-out infinite;
-  @keyframes float {
-    0% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(${(props) => props.float + 'px'});
-    }
-    100% {
-      transform: translateY(-0px);
-    }
-  }
+  animation: ${props => float(props.float)} 6s ease-in-out infinite;
 `
 
 Box.Stat = styled.span`
@@ -158,18 +147,7 @@ Box.Stat = styled.span`
   line-height: 120%;
 
   /* animation */
-  animation: float 6s ease-in-out infinite;
-  @keyframes float {
-    0% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(${(props) => props.float + 'px'});
-    }
-    100% {
-      transform: translateY(-0px);
-    }
-  }
+  animation: ${props => float(props.float)} 6s ease-in-out infinite;
 `
 
 const Quote = styled.span`

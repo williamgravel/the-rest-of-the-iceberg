@@ -9,7 +9,7 @@ import Particles from 'react-tsparticles'
 import particlesOptions from './particles.json'
 import { forceCheck } from 'react-lazyload'
 
-// GLOBAL VARIBLES
+// GLOBAL VARIABLES
 import { ThemeProvider } from 'styled-components'
 import { AuthContext, LibContext, TopContext, TimeContext } from './global/globalContexts'
 import { init, reducer } from './global/timeRangeReducer'
@@ -49,6 +49,7 @@ function App() {
       <Particles className='d-none d-lg-block' options={particlesOptions} />
       <Fullpage
         licenseKey={'E2CB5B80-44174E5C-8A9056CE-1041B060'}
+        credits={false}
         scrollingSpeed='700'
         navigation={true}
         navigationPosition='left'

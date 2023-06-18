@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { HourGlass } from '@styled-icons/entypo'
-import { SwitchHorizontal } from '@styled-icons/heroicons-outline'
+import { ArrowsRightLeft } from '@styled-icons/heroicons-outline'
 // import {
 //   Heart,
 //   Hot,
@@ -53,7 +53,7 @@ const TimeRangeButton = styled(HourGlass)`
   height: 40px;
 `
 
-const ArtistListButton = styled(SwitchHorizontal)`
+const ArtistListButton = styled(ArrowsRightLeft)`
   /* box */
   display: inline-block;
   width: 40px;

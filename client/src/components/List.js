@@ -21,11 +21,11 @@ const Title = styled.a`
   color: ${(props) => props.theme.light.color};
   font-size: 2.5rem;
   text-shadow: 2px 2px 1px ${(props) => props.theme.light.accent};
+  text-decoration: none;
 
   /* pseudo-classes */
   &:active {
     color: #70281a !important;
-    text-decoration: none;
   }
 `
 

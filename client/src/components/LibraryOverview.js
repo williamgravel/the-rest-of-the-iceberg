@@ -18,13 +18,16 @@ import { LargeThumbnail } from './Thumbnail'
 
 const TotalTracks = ({ delay, float }) => {
   const libData = useContext(LibContext)
-  const { countUp } = useCountUp({ end: libData.totalTracks, delay: delay, duration: 2 })
+  const { countUp } = useCountUp({
+    ref: 'totalTrackCount',
+    end: libData.totalTracks,
+    delay: delay,
+    duration: 2
+  })
   return (
     <Box>
       <Box.Text float={float}>total of</Box.Text>
-      <Box.Stat float={float} color='red'>
-        {countUp}
-      </Box.Stat>
+      <Box.Stat float={float} color='red' id='totalTrackCount' />
       <Box.Text float={float}>tracks saved</Box.Text>
     </Box>
   )
@@ -32,13 +35,16 @@ const TotalTracks = ({ delay, float }) => {
 
 const TotalArtists = ({ delay, float }) => {
   const libData = useContext(LibContext)
-  const { countUp } = useCountUp({ end: libData.totalArtists, delay: delay, duration: 2 })
+  const { countUp } = useCountUp({
+    ref: 'totalArtistCount',
+    end: libData.totalArtists,
+    delay: delay,
+    duration: 2
+  })
   return (
     <Box>
       <Box.Text float={float}>total of</Box.Text>
-      <Box.Stat float={float} color='pink'>
-        {countUp}
-      </Box.Stat>
+      <Box.Stat float={float} color='pink' id='totalArtistCount' />
       <Box.Text float={float}>artists saved</Box.Text>
     </Box>
   )
@@ -47,6 +53,7 @@ const TotalArtists = ({ delay, float }) => {
 const TotalPlaytime = ({ delay, float }) => {
   const libData = useContext(LibContext)
   const { countUp } = useCountUp({
+    ref: 'totalPlaytimeCount',
     end: Math.round(libData.totalPlaytime / 3.6e6),
     delay: delay,
     duration: 2,
@@ -55,9 +62,7 @@ const TotalPlaytime = ({ delay, float }) => {
   return (
     <Box>
       <Box.Text float={float}>total of</Box.Text>
-      <Box.Stat float={float} color='purple'>
-        {countUp}
-      </Box.Stat>
+      <Box.Stat float={float} color='purple' id='totalPlaytimeCount' />
       <Box.Text float={float}>of playtime</Box.Text>
     </Box>
   )
@@ -66,6 +71,7 @@ const TotalPlaytime = ({ delay, float }) => {
 const PercentExplicit = ({ delay, float }) => {
   const libData = useContext(LibContext)
   const { countUp } = useCountUp({
+    ref: 'percentExplicitCount',
     end: Math.round(libData.percentExplicit * 10) / 10,
     decimals: 1,
     delay: delay,
@@ -75,9 +81,7 @@ const PercentExplicit = ({ delay, float }) => {
   return (
     <Box>
       <Box.Text float={float}>library around</Box.Text>
-      <Box.Stat float={float} color='yellow'>
-        {countUp}
-      </Box.Stat>
+      <Box.Stat float={float} color='yellow' id='percentExplicitCount' />
       <Box.Text float={float}>explicit</Box.Text>
     </Box>
   )
@@ -86,6 +90,7 @@ const PercentExplicit = ({ delay, float }) => {
 const TracksPerArtist = ({ delay, float }) => {
   const libData = useContext(LibContext)
   const { countUp } = useCountUp({
+    ref: 'tracksPerArtistCount',
     end: Math.round(libData.tracksPerArtist.mean * 10) / 10,
     decimals: 1,
     delay: delay,
@@ -94,9 +99,7 @@ const TracksPerArtist = ({ delay, float }) => {
   return (
     <Box>
       <Box.Text float={float}>average of</Box.Text>
-      <Box.Stat float={float} color='green'>
-        {countUp}
-      </Box.Stat>
+      <Box.Stat float={float} color='green' id='tracksPerArtistCount' />
       <Box.Text float={float}>tracks saved per artist</Box.Text>
     </Box>
   )
@@ -105,6 +108,7 @@ const TracksPerArtist = ({ delay, float }) => {
 const DaysUntilSave = ({ delay, float }) => {
   const libData = useContext(LibContext)
   const { countUp } = useCountUp({
+    ref: 'daysUntilSaveCount',
     end: Math.round(libData.daysUntilSave.median),
     delay: delay,
     duration: 2,
@@ -113,9 +117,7 @@ const DaysUntilSave = ({ delay, float }) => {
   return (
     <Box>
       <Box.Text float={float}>median of</Box.Text>
-      <Box.Stat float={float} color='blue'>
-        {countUp}
-      </Box.Stat>
+      <Box.Stat float={float} color='blue' id='daysUntilSaveCount' />
       <Box.Text float={float}>until saving a track</Box.Text>
     </Box>
   )
@@ -132,12 +134,12 @@ const LibStats = () => {
       <LazyLoad height={680} once>
         <Row className='justify-content-center'>
           <ColBox lg={9}>
-            <TotalTracks delay={1} float={15} />
-            <TotalArtists delay={2.5} float={20} />
-            <TotalPlaytime delay={4} float={10} />
-            <PercentExplicit delay={5.5} float={25} />
-            <TracksPerArtist delay={7} float={15} />
-            <DaysUntilSave delay={8.5} float={20} />
+            <TotalTracks      delay={1.0} float={20} />
+            <TotalArtists     delay={2.5} float={10} />
+            <TotalPlaytime    delay={4.0} float={30} />
+            <PercentExplicit  delay={5.5} float={25} />
+            <TracksPerArtist  delay={7.0} float={10} />
+            <DaysUntilSave    delay={8.5} float={40} />
           </ColBox>
         </Row>
       </LazyLoad>
