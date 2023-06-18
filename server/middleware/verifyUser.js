@@ -1,10 +1,10 @@
 // PACKAGE IMPORTS
-const jwt = require('jsonwebtoken')
+import jwt from 'jsonwebtoken'
 
 // CONFIG & ENVIRONMENT VARIABLES
-const config = require('../config')
+import config from '../config.js'
 
-module.exports = function (req, res, next) {
+export default function (req, res, next) {
   if (req.cookies.token) {
     try {
       const decoded = jwt.verify(req.cookies.token, config.app.secret_key)

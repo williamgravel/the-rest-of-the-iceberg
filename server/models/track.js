@@ -1,4 +1,4 @@
-const db = require('../db')
+import db from '../db.js'
 const Schema = db.Schema
 
 const trackSchema = Schema({
@@ -24,4 +24,4 @@ const trackSchema = Schema({
   },
 })
 
-module.exports = db.model('Track', trackSchema)
+export default db.model('Track', trackSchema)

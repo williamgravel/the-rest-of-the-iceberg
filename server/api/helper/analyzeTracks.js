@@ -1,18 +1,18 @@
 // PACKAGE IMPORTS
-const queryString = require('query-string')
-const spotify = require('../spotify')
-const stats = require('simple-statistics')
+import queryString from 'query-string'
+import spotify from '../spotify.js'
+import { mean } from 'simple-statistics'
 
-module.exports = async function (username, trackList) {
+export default async function (username, trackList) {
   const response = await spotify.get(
     'https://api.spotify.com/v1/audio-features?' + queryString.stringify({ ids: trackList }, { arrayFormat: 'comma' }),
     { headers: { 'User-ID': username } }
   )
 
   const audioFeatures = {
-    danceability: stats.mean(response.data.audio_features.map((track) => track.danceability)),
-    energy: stats.mean(response.data.audio_features.map((track) => track.energy)),
-    valence: stats.mean(response.data.audio_features.map((track) => track.valence)),
+    danceability: mean(response.data.audio_features.map((track) => track.danceability)),
+    energy: mean(response.data.audio_features.map((track) => track.energy)),
+    valence: mean(response.data.audio_features.map((track) => track.valence)),
     percentAcoustic:
       response.data.audio_features.filter((track) => track.acousticness >= 0.8).length / trackList.length,
     percentInstrumental:

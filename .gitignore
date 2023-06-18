@@ -1,5 +1,6 @@
-# Dependency directories
+# Build directories
 **/node_modules/
+**/build/
 
 # Config files
 **/.eslintrc.json

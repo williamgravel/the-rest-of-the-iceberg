@@ -1,20 +1,20 @@
 // SERVER PACKAGES IMPORTS
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const queryString = require('query-string')
-const axios = require('axios').default
-const jwt = require('jsonwebtoken')
+import queryString from 'query-string'
+import axios from 'axios'
+import jwt from 'jsonwebtoken'
 
 // CONFIG & ENVIRONMENT VARIABLES
-const config = require('../config')
+import config from '../config.js'
 
 // CONSOLE COLORS
-const chalk = require('chalk')
+import chalk from 'chalk'
 const initalized = chalk.bold.magenta
 const authorized = chalk.bold.green
 
 // DATABASE MODELS
-const User = require('../models/user')
+import User from '../models/user.js'
 User.on('index', (err) => {
   if (!err) {
     console.log(initalized('[MONGODB] USER MODEL INDEXED'))
@@ -106,20 +106,17 @@ router.get('/spotify/callback', (req, res) => {
                 accessToken: access_token,
                 refreshToken: refresh_token,
               },
-              { upsert: true, new: true },
-              function (err, doc) {
-                if (err) {
-                  console.log(err)
-                } else {
-                  const token = jwt.sign({ username: doc.username }, config.app.secret_key)
+              { upsert: true, new: true }
+            ).then(doc => {
+              const token = jwt.sign({ username: doc.username }, config.app.secret_key)
 
-                  console.log(authorized('[SPOTIFY] USER AUTHENTICATED'))
-                  res.cookie('token', token, { httpOnly: true })
-                  res.cookie('auth', true)
-                  res.redirect('http://localhost:3000/')
-                }
-              }
-            )
+              console.log(authorized('[SPOTIFY] USER AUTHENTICATED'))
+              res.cookie('token', token, { httpOnly: true })
+              res.cookie('auth', true)
+              res.redirect('http://localhost:3000/')
+            }).catch(err => {
+              console.log(err)
+            })
           })
           .catch((error) => {
             console.log('[AXIOS] GET REQUEST ERROR')
@@ -140,4 +137,4 @@ router.get('/spotify/logout', (req, res) => {
   res.sendStatus(200)
 })
 
-module.exports = router
+export default router

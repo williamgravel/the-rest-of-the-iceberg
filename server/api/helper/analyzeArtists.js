@@ -1,11 +1,11 @@
 // PACKAGE IMPORTS
-const queryString = require('query-string')
-const spotify = require('../spotify')
+import queryString from 'query-string'
+import spotify from '../spotify.js'
 
 // DATABASE MODELS
-const Genre = require('../../models/genre')
+import Genre from '../../models/genre.js'
 
-module.exports = async function (username, artistList) {
+export default async function (username, artistList) {
   let uniqueGenres = []
   let commonGenres = []
 

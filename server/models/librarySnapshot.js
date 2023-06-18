@@ -1,4 +1,4 @@
-const db = require('../db')
+import db from '../db.js'
 const Schema = db.Schema
 
 const snapshotSchema = Schema(
@@ -41,5 +41,4 @@ const snapshotSchema = Schema(
     timestamps: true,
   }
 )
-
-module.exports = db.model('LibrarySnapshot', snapshotSchema)
+export default db.model('LibrarySnapshot', snapshotSchema)

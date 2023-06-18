@@ -1,20 +1,20 @@
 // PACKAGE IMPORTS
-const queryString = require('query-string')
-const spotify = require('./spotify')
+import queryString from 'query-string'
+import spotify from './spotify.js'
 
 // DATE MANIPULATION
-const dayjs = require('dayjs')
-const isBetween = require('dayjs/plugin/isBetween')
+import dayjs from 'dayjs'
+import isBetween from 'dayjs/plugin/isBetween.js'
 dayjs.extend(isBetween)
 
 // SPOTIFY API FUNCTIONS
-const analyzeTracks = require('./helper/analyzeTracks')
+import analyzeTracks from './helper/analyzeTracks.js'
 
 // DATABASE MODELS
-const User = require('../models/user')
-const GlobalStats = require('../models/globalStats')
+import User from '../models/user.js'
+import GlobalStats from '../models/globalStats.js'
 
-module.exports = async function (username) {
+export default async function (username) {
   const user = await User.findOne({ username: username }).select('country').exec()
   const doc = await GlobalStats.findOne({ country: user.country }).select('updatedAt').exec()
   if (!doc || !dayjs(doc.updatedAt.getTime(), 'x').isBetween(dayjs().subtract(7, 'd'), dayjs(), 'd', '(]')) {

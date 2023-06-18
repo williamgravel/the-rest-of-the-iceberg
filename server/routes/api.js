@@ -1,16 +1,19 @@
 // PACKAGE IMPORTS
-const express = require('express')
+import express from 'express'
 const router = express.Router()
 
 // SPOTIFY API FUNCTIONS
-const analyzeLibrary = require('../api/analyzeLibrary')
-const getTop = require('../api/getTop')
-const getGlobal = require('../api/getGlobal')
-const generatePlaylist = require('../api/generatePlaylist')
+import analyzeLibrary from '../api/analyzeLibrary.js'
+import getTop from '../api/getTop.js'
+import getGlobal from '../api/getGlobal.js'
+import * as generatePlaylist from '../api/generatePlaylist.js'
 
 // ROUTER MIDDLEWARE
-router.use(require('../middleware/verifyUser'))
-router.use(require('../middleware/validateQuery'))
+import verifyUser from '../middleware/verifyUser.js'
+import validateQuery from '../middleware/validateQuery.js'
+
+router.use(verifyUser)
+router.use(validateQuery)
 
 // EXPRESS ROUTES
 router.get('/library', async (req, res) => {
@@ -88,4 +91,4 @@ router.get('/playlist/second', async (req, res) => {
   res.json(playlistURL)
 })
 
-module.exports = router
+export default router

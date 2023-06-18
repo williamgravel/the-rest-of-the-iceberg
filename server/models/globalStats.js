@@ -1,4 +1,4 @@
-const db = require('../db')
+import db from '../db.js'
 const Schema = db.Schema
 
 const globalSchema = Schema(
@@ -21,4 +21,4 @@ const globalSchema = Schema(
   }
 )
 
-module.exports = db.model('GlobalStats', globalSchema, 'globalstats')
+export default db.model('GlobalStats', globalSchema, 'globalstats')

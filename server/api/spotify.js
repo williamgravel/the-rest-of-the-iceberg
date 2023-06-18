@@ -1,16 +1,16 @@
 // PACKAGE IMPORTS
-const queryString = require('query-string')
-const axios = require('axios').default
+import queryString from 'query-string'
+import axios from 'axios'
 
 // CONFIG & ENVIRONMENT VARIABLES
-const config = require('../config')
+import config from '../config.js'
 
 // CONSOLE COLORS
-const chalk = require('chalk')
+import chalk from 'chalk'
 const warning = chalk.bold.yellow
 
 // DATABASE MODELS
-const User = require('../models/user')
+import User from '../models/user.js'
 
 // CUSTOM AXIOS INSTANCE
 const spotify = axios.create()
@@ -76,4 +76,4 @@ spotify.interceptors.response.use(null, async (error) => {
   }
 })
 
-module.exports = spotify
+export default spotify

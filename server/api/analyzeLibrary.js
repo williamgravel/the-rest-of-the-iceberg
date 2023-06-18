@@ -1,18 +1,18 @@
 // PACKAGE IMPORTS
-const queryString = require('query-string')
-const spotify = require('./spotify')
-const stats = require('simple-statistics')
+import queryString from 'query-string'
+import spotify from './spotify.js'
+import { mean, median } from 'simple-statistics'
 
 // DATE MANIPULATION
-const dayjs = require('dayjs')
-const isBetween = require('dayjs/plugin/isBetween')
+import dayjs from 'dayjs'
+import isBetween from 'dayjs/plugin/isBetween.js'
 dayjs.extend(isBetween)
 
 // DATABASE MODELS
-const LibrarySnapshot = require('../models/librarySnapshot')
-const Artist = require('../models/artist')
+import LibrarySnapshot from '../models/librarySnapshot.js'
+import Artist from '../models/artist.js'
 
-module.exports = async function (username) {
+export default async function (username) {
   const doc = await LibrarySnapshot.findOne({ username: username }).select('updatedAt').exec()
   if (!doc || !dayjs(doc.updatedAt.getTime(), 'x').isBetween(dayjs().subtract(7, 'd'), dayjs(), 'd', '(]')) {
     let apiURL =
@@ -149,8 +149,8 @@ module.exports = async function (username) {
       {
         totalTracks: totalTracks,
         totalArtists: uniqueArtists.length,
-        tracksPerArtist: { mean: stats.mean(trackCountArray), median: stats.median(trackCountArray) },
-        daysUntilSave: { mean: stats.mean(daysUntilSave), median: stats.median(daysUntilSave) },
+        tracksPerArtist: { mean: mean(trackCountArray), median: median(trackCountArray) },
+        daysUntilSave: { mean: mean(daysUntilSave), median: median(daysUntilSave) },
         totalPlaytime: totalPlaytime,
         percentExplicit: (totalExplicit / totalTracks) * 100,
         commonArtists: commonArtists,

@@ -1,13 +1,13 @@
-const express = require('express')
+// PACKAGE IMPORTS
+import express from 'express'
 const router = express.Router()
-const fs = require('fs')
 
-fs.readdirSync(__dirname).forEach((route) => {
-  route = route.split('.')[0]
-  if (route === 'index') {
-    return
-  }
-  router.use('/' + route, require('./' + route))
-})
+// ROUTE IMPORTS
+import apiRouter from './api.js'
+import authRouter from './auth.js'
 
-module.exports = router
+// SETUP ROUTES
+router.use('/api', apiRouter)
+router.use('/auth', authRouter)
+
+export default router

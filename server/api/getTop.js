@@ -1,22 +1,22 @@
 // PACKAGE IMPORTS
-const queryString = require('query-string')
-const spotify = require('./spotify')
+import queryString from 'query-string'
+import spotify from './spotify.js'
 
 // DATE MANIPULATION
-const dayjs = require('dayjs')
-const isBetween = require('dayjs/plugin/isBetween')
+import dayjs from 'dayjs'
+import isBetween from 'dayjs/plugin/isBetween.js'
 dayjs.extend(isBetween)
 
 // SPOTIFY API FUNCTIONS
-const analyzeArtists = require('./helper/analyzeArtists')
-const analyzeTracks = require('./helper/analyzeTracks')
+import analyzeArtists from './helper/analyzeArtists.js'
+import analyzeTracks from './helper/analyzeTracks.js'
 
 // DATABASE MODELS
-const Track = require('../models/track')
-const Artist = require('../models/artist')
-const TopList = require('../models/topList')
+import Track from '../models/track.js'
+import Artist from '../models/artist.js'
+import TopList from '../models/topList.js'
 
-module.exports = async function (username, options) {
+export default async function (username, options) {
   const doc = await TopList.findOne({ username: username, queryType: options.queryType, timeRange: options.timeRange })
     .select('updatedAt')
     .exec()

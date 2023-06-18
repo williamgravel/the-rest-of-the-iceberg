@@ -1,4 +1,4 @@
-const db = require('../db')
+import db from '../db.js'
 const Schema = db.Schema
 
 const userSchema = Schema(
@@ -19,4 +19,4 @@ const userSchema = Schema(
   }
 )
 
-module.exports = db.model('User', userSchema)
+export default db.model('User', userSchema)

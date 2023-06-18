@@ -1,11 +1,11 @@
 // PACKAGE IMPORTS
-const queryString = require('query-string')
-const spotify = require('../spotify')
+import queryString from 'query-string'
+import spotify from '../spotify.js'
 
 // DATABASE MODELS
-const LibrarySnapshot = require('../../models/librarySnapshot')
+import LibrarySnapshot from '../../models/librarySnapshot.js'
 
-const tracks = async function (username, trackList, options) {
+export const tracks = async function (username, trackList, options) {
   try {
     let isSaved = []
     let filteredTracks = []
@@ -38,7 +38,7 @@ const tracks = async function (username, trackList, options) {
   }
 }
 
-const artists = async function (username, artistList, options) {
+export const artists = async function (username, artistList, options) {
   try {
     let savedArtists = []
     let filteredArtists = []
@@ -76,7 +76,7 @@ const artists = async function (username, artistList, options) {
   }
 }
 
-const both = async function (username, trackList, options) {
+export const both = async function (username, trackList, options) {
   try {
     const queryList = trackList.map((track) => track.id)
     let isTrackSaved = []
@@ -120,10 +120,4 @@ const both = async function (username, trackList, options) {
   } catch (error) {
     console.log('UNABLE TO CHECK SAVED TRACKS/ARTISTS')
   }
-}
-
-module.exports = {
-  tracks: tracks,
-  artists: artists,
-  both: both,
 }

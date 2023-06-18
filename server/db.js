@@ -1,12 +1,12 @@
 // DATABASE PACKAGE IMPORTS
-const mongoose = require('mongoose')
-const queryString = require('query-string')
+import mongoose from 'mongoose'
+import queryString from 'query-string'
 
 // CONFIG & ENVIRONMENT VARIABLES
-const config = require('./config')
+import config from './config.js'
 
 // CONSOLE COLORS
-const chalk = require('chalk')
+import chalk from 'chalk'
 const connected = chalk.bold.cyan
 const error = chalk.bold.yellow
 const disconnected = chalk.bold.red
@@ -15,23 +15,13 @@ const terminated = chalk.bold.magenta
 // MONGODB CONNECTION
 const mongooseOptions = {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-  keepAlive: true,
-  keepAliveInitialDelay: 300000,
+  useUnifiedTopology: true
 }
 
-if (config.env === 'development') {
-  mongoose.connect(`mongodb://${config.db.host}:${config.db.port}/${config.db.name}`, mongooseOptions)
-} else if (config.env === 'production') {
-  mongoose.connect(
-    `mongodb://${config.db.username}:${config.db.password}@${config.db.host}:${config.db.port}/${
-      config.db.name
-    }?${queryString.stringify(config.db.options)}`,
-    mongooseOptions
-  )
-}
+mongoose.connect(
+  `mongodb+srv://${config.db.username}:${config.db.password}@${config.db.host}/?${queryString.stringify(config.db.options)}`,
+  mongooseOptions
+)
 
 // CONNECTION LOGS
 mongoose.connection.on('connected', () => {
@@ -47,11 +37,11 @@ mongoose.connection.on('disconnected', () => {
 })
 
 process.on('SIGINT', () => {
-  mongoose.connection.close(() => {
+  mongoose.connection.close().then(() => {
     console.log(terminated('[MONGODB] DEFAULT CONNECTION TERMINATED'))
     process.exit(0)
   })
 })
 
 // CONNECTION EXPORT
-module.exports = mongoose
+export default mongoose

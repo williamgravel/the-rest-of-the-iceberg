@@ -1,20 +1,21 @@
 // SERVER PACKAGES IMPORTS
-const express = require('express')
-const cookieParser = require('cookie-parser')
-const cors = require('cors')
+import express from 'express'
+import cookieParser from 'cookie-parser'
+import cors from 'cors'
 
-const chalk = require('chalk')
+// COLORFUL CONSOLE LOGS
+import chalk from 'chalk'
 const listening = chalk.bold.white
 
 // CONFIG & ENVIRONMENT VARIABLES
-const config = require('./config')
+import config from './config.js'
 
 // DATABASE IMPORT
-require('./db')
+import './db.js'
 
 // EXPRESS APP
 const app = express()
-const routes = require('./routes/index')
+import routes from './routes/index.js'
 
 // EXPRESS MIDDLEWARE
 app.use(express.json())

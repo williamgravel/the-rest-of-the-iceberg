@@ -1,4 +1,4 @@
-const db = require('../db')
+import db from '../db.js'
 const Schema = db.Schema
 
 const listSchema = Schema(
@@ -47,4 +47,4 @@ const listSchema = Schema(
   }
 )
 
-module.exports = db.model('TopList', listSchema)
+export default db.model('TopList', listSchema)

@@ -1,13 +1,13 @@
 // PACKAGE IMPORTS
-const queryString = require('query-string')
-const spotify = require('./spotify')
+import queryString from 'query-string'
+import spotify from './spotify.js'
 
 // SPOTIFY API FUNCTIONS
-const checkSaved = require('./helper/checkSaved')
+import * as checkSaved from './helper/checkSaved.js'
 
 // DATABASE MODELS
-const TopList = require('../models/topList')
-const LibrarySnapshot = require('../models/librarySnapshot')
+import TopList from '../models/topList.js'
+import LibrarySnapshot from '../models/librarySnapshot.js'
 
 function sample(pool, k) {
   const n = pool.length
@@ -39,7 +39,7 @@ function sample(pool, k) {
   }
 }
 
-const exploreSeed = async function (username, options) {
+export const exploreSeed = async function (username, options) {
   const top = await TopList.findOne({ username: username, queryType: 'artists', timeRange: options.timeRange })
     .populate('list')
     .lean()
@@ -86,7 +86,7 @@ const exploreSeed = async function (username, options) {
   return playlistRes.data.external_urls.spotify
 }
 
-const exploreTaste = async function (username, options) {
+export const exploreTaste = async function (username, options) {
   try {
     const top = await TopList.findOne({ username: username, queryType: 'artists', timeRange: options.timeRange })
       .populate('list')
@@ -159,7 +159,7 @@ const exploreTaste = async function (username, options) {
   }
 }
 
-const secondChance = async function (username, options) {
+export const secondChance = async function (username, options) {
   try {
     const library = await LibrarySnapshot.findOne({ username: username }).select('savedArtists.single').exec()
     let randArtists = sample(library.savedArtists.single, options.maxSavedArtists)
@@ -212,10 +212,4 @@ const secondChance = async function (username, options) {
     console.log(error)
     return null
   }
-}
-
-module.exports = {
-  exploreSeed: exploreSeed,
-  exploreTaste: exploreTaste,
-  secondChance: secondChance,
 }
