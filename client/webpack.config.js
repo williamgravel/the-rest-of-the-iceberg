@@ -1,6 +1,12 @@
+// PACKAGE IMPORTS
+const path = require('path');
+
+// WEBPACK PLUGINS
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const path = require('path');
+
+// CONFIG & ENVIRONMENT VARIABLES
+const config = require('./config')
 
 module.exports = {
   entry: './index.js',
@@ -15,15 +21,17 @@ module.exports = {
     static: {
       directory: path.join(__dirname, 'public')
     },
-    open: true,
-    hot: true,
-    liveReload: true,
     proxy: [{
       context: ['/api', '/auth'],
-      target: 'http://localhost:3000',
-      router: () => 'http://localhost:5000',
-      logLevel: 'debug'
-   }]
+      target: config.app.client_url,
+      router: () => config.app.server_url
+   }],
+   open: true,
+   hot: true
+  },
+  stats: 'summary',
+  infrastructureLogging: {
+    level: 'warn'
   },
   resolve: {
     extensions: ['.js', '.jsx', '.scss'],

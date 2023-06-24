@@ -48,8 +48,6 @@ function App() {
     <>
       <Particles className='d-none d-lg-block' options={particlesOptions} />
       <Fullpage
-        licenseKey={'E2CB5B80-44174E5C-8A9056CE-1041B060'}
-        credits={false}
         scrollingSpeed='700'
         navigation={true}
         navigationPosition='left'

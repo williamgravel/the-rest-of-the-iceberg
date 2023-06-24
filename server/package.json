@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "client": "cd ../client && npm run start",
+    "client": "cd ../client && npm run --silent start",
     "server": "nodemon server.js --harmony",
-    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
+    "dev": "concurrently --kill-others-on-fail \"npm run --silent server\" \"npm run --silent client\"",
     "start": "node server.js",
     "heroku-postbuild": "cd ../client && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
   },

@@ -63,7 +63,7 @@ router.get('/spotify/callback', (req, res) => {
 
   if (!state || state !== stored_state) {
     res.redirect(
-      'http://localhost:3000/#' +
+      config.app.client_url + '/#' +
         queryString.stringify({
           error: 'state_mismatch',
         })
@@ -113,7 +113,7 @@ router.get('/spotify/callback', (req, res) => {
               console.log(authorized('[SPOTIFY] USER AUTHENTICATED'))
               res.cookie('token', token, { httpOnly: true })
               res.cookie('auth', true)
-              res.redirect('http://localhost:3000/')
+              res.redirect(config.app.client_url)
             }).catch(err => {
               console.log(err)
             })
@@ -126,7 +126,7 @@ router.get('/spotify/callback', (req, res) => {
       .catch((error) => {
         console.log('[AXIOS] POST REQUEST ERROR')
         console.log(error)
-        res.redirect('http://localhost:3000/')
+        res.redirect(config.app.client_url)
       })
   }
 })

@@ -10,15 +10,6 @@ const fadeIn = keyframes`
   }
 `
 
-// const fadeOut = keyframes`
-//   from {
-//     opacity: 1;
-//   }
-//   to {
-//     opacity: 0;
-//   }
-// `
-
 const float = (y) => keyframes`
   0% {
     transform: translateY(0px);

@@ -25,6 +25,6 @@ app.use(cors())
 app.use(routes)
 
 // APP LISTEN
-app.listen(config.app.port, () => {
-  console.log(listening(`[EXPRESS] SERVER LISTENING ON PORT ${config.app.port}`))
+app.listen(config.app.server_port, () => {
+  console.log(listening(`[EXPRESS] SERVER LISTENING ON PORT ${config.app.server_port}`))
 })

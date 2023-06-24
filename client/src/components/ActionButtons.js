@@ -19,8 +19,7 @@ const ButtonWrapper = styled.div`
   max-width: 40px;
   height: 50px;
   margin: 0 0 0 20px;
-  position: absolute;
-  bottom: 0;
+  position: relative;
 
   /* font */
   color: ${(props) => props.theme[props.color]?.primary?.color || props.theme[props.color].color};
