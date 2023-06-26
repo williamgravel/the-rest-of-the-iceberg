@@ -44,8 +44,8 @@
     "webpack-dev-server": "^4.15.1"
   },
   "scripts": {
-    "build": "webpack --mode production",
-    "start": "webpack-dev-server --mode development"
+    "build": "webpack",
+    "dev": "webpack-dev-server"
   },
   "browserslist": {
     "production": [

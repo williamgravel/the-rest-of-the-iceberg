@@ -10,14 +10,14 @@ const config = require('./config')
 
 module.exports = {
   entry: './index.js',
-  mode: 'development',
+  mode: config.env,
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js',
   },
   target: 'web',
   devServer: {
-    port: '3000',
+    port: config.app.client_port,
     static: {
       directory: path.join(__dirname, 'public')
     },
